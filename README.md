@@ -3,3 +3,4 @@
 ## Authors
 
 Chandler Reyes (cr595)
+Nora Fayyazuddin Ljungberg (nef33)
