@@ -5,24 +5,32 @@ type suit =
   | Clubs
 
 type t = suit * int
-(* eg [Spades, n] represents "n of spades". [n] must be 1 through 14 inclusive.
-   1 and 14 represent ace. 11 represents jack. 12 represents queen. 13
-   represents king. *)
+(** AF: [(Suit, n)] represents a card with rank [n] of suit [Suit]. Two through
+    nine are self-describing rank. 11 is Jack, 12 is Queen, 13 is King, 1 and 14
+    are both Ace. RI: [n] must be between 1 and 14, inclusive. *)
 
 exception BadCard
 
+(** Requires [str] to be one of "spades", "hearts", "diamonds", or "clubs".
+    Requires [n] to be between 1 and 14 (inclusive). *)
 let of_pair (str, n) =
-  if n < 1 || n > 14 then invalid_arg "bad int"
+  if n < 1 || n > 14 then
+    invalid_arg "Rank must be between 1 and 14 (inclusive)."
   else
-    match str with
-    | "Spades" -> (Spades, n)
-    | "Hearts" -> (Hearts, n)
-    | "Diamonds" -> (Diamonds, n)
-    | "Clubs" -> (Clubs, n)
-    | _ -> invalid_arg "bad suit"
+    match String.lowercase_ascii str with
+    | "spades" -> (Spades, n)
+    | "hearts" -> (Hearts, n)
+    | "diamonds" -> (Diamonds, n)
+    | "clubs" -> (Clubs, n)
+    | _ ->
+        invalid_arg
+          "Suit must be one of \"Spades\", \"Hearts\", \"Diamonds\", or \
+           \"Clubs\"."
 
-let number (s, n) = n
+(** A card representing an Ace always gets sent to 14. *)
+let number (s, n) = if n = 1 then 14 else n
 
+(* Helper function that converts something of type [suit] to a string. *)
 let string_of_suit s =
   match s with
   | Spades -> "Spades"
@@ -30,6 +38,7 @@ let string_of_suit s =
   | Diamonds -> "Diamonds"
   | Clubs -> "Clubs"
 
+(* Helper function that converts the number of a card to its rank. *)
 let string_of_number n =
   match n with
   | 1 | 14 -> "Ace"
@@ -45,7 +54,11 @@ let string_of_number n =
   | 11 -> "Jack"
   | 12 -> "Queen"
   | 13 -> "King"
-  | _ -> raise BadCard
+  | _ -> invalid_arg "bad int"
 
 let suit (s, n) = string_of_suit s
+let equal (s1, n1) (s2, n2) = n1 = n2 && string_of_suit s1 = string_of_suit s2
+
+(* of the form "<Rank> of <Suit>". The rank and suit are both capitalized.
+   Example: "Five of Spades" *)
 let to_string (s, n) = string_of_number n ^ " of " ^ string_of_suit s
