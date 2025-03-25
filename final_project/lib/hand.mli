@@ -19,6 +19,10 @@ val hand_size : int
 val play_limit : int
 (** [play_limit] is the number of cards that a player can play at a time. *)
 
+val hand_limit : int
+(** [hand_limit] is the maximum number of hands that can be played in a given
+    round of the game*)
+
 val highest_hand : t -> hands
 (** [highest_score hand] is the highest score possible from a given set of
     cards. Final implementation should output a tuple int * hand_type.t or just
