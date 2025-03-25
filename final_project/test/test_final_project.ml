@@ -9,14 +9,18 @@ let tests =
          ( "simple card test suit" >:: fun _ ->
            assert_equal (Card.suit (Card.of_pair ("Spades", 5))) "Spades" );
          ( "simple card test raise bad suit" >:: fun _ ->
-           assert_raises (Invalid_argument "bad suit") (fun _ ->
-               Card.of_pair ("Spade", 5)) );
+           assert_raises
+             (Invalid_argument
+                "Suit must be one of \"Spades\", \"Hearts\", \"Diamonds\", or \
+                 \"Clubs\".") (fun _ -> Card.of_pair ("Spade", 5)) );
          ( "simple card test raise bad number" >:: fun _ ->
-           assert_raises (Invalid_argument "bad int") (fun _ ->
-               Card.of_pair ("Spades", 0)) );
+           assert_raises
+             (Invalid_argument "Rank must be between 1 and 14 (inclusive).")
+             (fun _ -> Card.of_pair ("Spades", 0)) );
          ( "simple card test raise bad suit and bad number" >:: fun _ ->
-           assert_raises (Invalid_argument "bad int") (fun _ ->
-               Card.of_pair ("Spade", 0)) );
+           assert_raises
+             (Invalid_argument "Rank must be between 1 and 14 (inclusive).")
+             (fun _ -> Card.of_pair ("Spade", 0)) );
          ( " " >:: fun _ ->
            assert_equal
              (Card.to_string (Card.of_pair ("Spades", 5)))
