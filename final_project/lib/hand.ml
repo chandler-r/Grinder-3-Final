@@ -5,7 +5,7 @@ type t = Card.t list
 type hands =
   | HighCard
   | Pair
-  | TwoPair
+  | TwoPai
   | ThreeKind
   | Straight
   | Flush
@@ -32,7 +32,7 @@ let highest_hand play = (HighCard, play)
    in the hand *)
 
 let cycle_cards cards hand =
-  let len = List.length cards in
+  (* let len = List.length cards in *)
   List.filter (Fun.negate (fun y -> List.mem y cards)) hand
 (*@ Deck.draw len*)
 (*TODO: will need to use some Deck.draw function where we draw [len] cards if
