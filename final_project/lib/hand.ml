@@ -5,14 +5,13 @@ type t = Card.t list
 type hands =
   | HighCard
   | Pair
-  | TwoPai
+  | TwoPair
   | ThreeKind
   | Straight
   | Flush
   | FullHouse
   | FourKind
   | StraightFlush
-  | RoyalFlush
 
 exception TooManyCards
 
@@ -26,10 +25,100 @@ let rep_ok_hand hand =
 let rep_ok_play play =
   if List.length play <= !play_limit then play else raise TooManyCards
 
-let highest_hand play = (HighCard, play)
-(*TODO*)
-(* will need some pattern match on the number/value corresponding to each card
-   in the hand *)
+(** [count_dup_ranks [] card_lst] is an association list matching a rank to the
+    number of times a card in [card_lst] has that rank. *)
+let rec count_dup_ranks acc (card_lst : Card.t list) =
+  match card_lst with
+  | [] -> acc
+  | h :: t -> (
+      match List.assoc_opt h acc with
+      | None -> count_dup_ranks ((h, 1) :: acc) t
+      | Some x -> count_dup_ranks ((h, x + 1) :: List.remove_assoc h acc) t)
+
+(** [is_flush card_lst] outputs [true] if [card_lst] contains a flush (5 cards
+    of the same suit), and [false] otherwise. *)
+let is_flush card_lst =
+  List.length card_lst = 5
+  && List.filter
+       (fun elem -> Card.suit (List.hd card_lst) = Card.suit elem)
+       card_lst
+     |> List.length = 5
+
+(** [is_ascending_order 0 card_lst] outputs [true] if the rank of every card in
+    [card_lst] is one higher than the rank of the card preceding it in
+    [card_lst], and [false] otherwise (an Ace has a rank of 1 or 14). Returns
+    [true] if [card_lst] is empty. *)
+let rec is_ascending_order prev card_lst =
+  match card_lst with
+  | [] -> true
+  | [ a; b ] ->
+      if Card.number b = 14 && Card.number a = 5 then true
+        (* If Ace is last card in sorted list, then check if the preceding card
+           is a 5; this implies the 3 other cards were 2, 3, 4, and we have a
+           straight (else this function would've returned false already) *)
+      else if Card.number b = Card.number a + 1 then true
+      else false
+  | h :: t ->
+      if Card.number h = prev + 1 then is_ascending_order (Card.number h) t
+      else false
+
+(** [is_straight card_lst] outputs [true] if [card_lst] contains a straight, and
+    [false] otherwise. *)
+let is_straight card_lst =
+  if List.length card_lst != 5 then false
+  else
+    let sorted_lst =
+      List.sort
+        (fun card1 card2 -> Card.number card1 - Card.number card2)
+        card_lst
+    in
+    is_ascending_order 0 sorted_lst
+
+let highest_hand played =
+  let played_hand = rep_ok_play played in
+  let dups_lst =
+    List.sort
+      (fun (a, b) (c, d) ->
+        if b - d = 0 then Card.number a - Card.number c else b - d)
+      (count_dup_ranks [] played_hand)
+    (* If cards have the same frequency in the hand, then the higher-ranked card
+       shows first*)
+  in
+  let highest_dups = List.hd dups_lst in
+  let snd_highest_dups = List.hd (List.tl dups_lst) in
+  match highest_dups with
+  | rank, 4 -> (FourKind, rank :: rank :: rank :: [ rank ]) (* Four of a kind *)
+  | rank, 3 -> (
+      match snd_highest_dups with
+      | snd_rank, 2 ->
+          (FullHouse, rank :: rank :: rank :: snd_rank :: [ snd_rank ])
+          (* Full House *)
+      | snd_rank, _ ->
+          (ThreeKind, rank :: rank :: [ rank ]) (* Three of a kind *))
+  | rank, 2 -> (
+      match snd_highest_dups with
+      | snd_rank, 2 ->
+          (TwoPair, rank :: rank :: snd_rank :: [ snd_rank ]) (* Two pair *)
+      | snd_rank, _ -> (Pair, rank :: [ rank ]) (* Pair *))
+  | _ ->
+      (* If no duplicates, then played hand must be straight flush, flush,
+         straight, or high card *)
+      if is_flush played then
+        if is_straight played then (StraightFlush, played) else (Flush, played)
+      else if is_straight played then (Straight, played)
+      else (HighCard, [ List.hd dups_lst |> fst ])
+
+let played_hand_type hand =
+  match hand with
+  | HighCard -> "high card"
+  | Pair -> "pair"
+  | TwoPair -> "two pair"
+  | ThreeKind -> "three of a kind"
+  | Straight -> "straight"
+  | Flush -> "flush"
+  | FullHouse -> "full house"
+  | FourKind -> "four of a kind"
+  | StraightFlush -> "straight flush"
 
 let cycle_cards cards hand =
   (* let len = List.length cards in *)
