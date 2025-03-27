@@ -12,6 +12,9 @@ type hands =
   | FullHouse
   | FourKind
   | StraightFlush
+  | FiveKind
+  | FlushHouse
+  | FlushFive
 
 exception TooManyCards
 
@@ -31,9 +34,12 @@ let rec count_dup_ranks acc (card_lst : Card.t list) =
   match card_lst with
   | [] -> acc
   | h :: t -> (
-      match List.assoc_opt h acc with
-      | None -> count_dup_ranks ((h, 1) :: acc) t
-      | Some x -> count_dup_ranks ((h, x + 1) :: List.remove_assoc h acc) t)
+      match List.assoc_opt (Card.number h) acc with
+      | None -> count_dup_ranks ((Card.number h, 1) :: acc) t
+      | Some x ->
+          count_dup_ranks
+            ((Card.number h, x + 1) :: List.remove_assoc (Card.number h) acc)
+            t)
 
 (** [is_flush card_lst] outputs [true] if [card_lst] contains a flush (5 cards
     of the same suit), and [false] otherwise. *)
@@ -59,7 +65,8 @@ let rec is_ascending_order prev card_lst =
       else if Card.number b = Card.number a + 1 then true
       else false
   | h :: t ->
-      if Card.number h = prev + 1 then is_ascending_order (Card.number h) t
+      if prev = 0 then is_ascending_order (Card.number h) t
+      else if Card.number h = prev + 1 then is_ascending_order (Card.number h) t
       else false
 
 (** [is_straight card_lst] outputs [true] if [card_lst] contains a straight, and
@@ -78,35 +85,75 @@ let highest_hand played =
   let played_hand = rep_ok_play played in
   let dups_lst =
     List.sort
-      (fun (a, b) (c, d) ->
-        if b - d = 0 then Card.number a - Card.number c else b - d)
+      (fun (a, b) (c, d) -> if b - d = 0 then c - a else d - b)
       (count_dup_ranks [] played_hand)
     (* If cards have the same frequency in the hand, then the higher-ranked card
        shows first*)
   in
+  let is_flush = is_flush played_hand in
+  let is_straight = is_straight played_hand in
   let highest_dups = List.hd dups_lst in
-  let snd_highest_dups = List.hd (List.tl dups_lst) in
-  match highest_dups with
-  | rank, 4 -> (FourKind, rank :: rank :: rank :: [ rank ]) (* Four of a kind *)
-  | rank, 3 -> (
-      match snd_highest_dups with
-      | snd_rank, 2 ->
-          (FullHouse, rank :: rank :: rank :: snd_rank :: [ snd_rank ])
-          (* Full House *)
-      | snd_rank, _ ->
-          (ThreeKind, rank :: rank :: [ rank ]) (* Three of a kind *))
-  | rank, 2 -> (
-      match snd_highest_dups with
-      | snd_rank, 2 ->
-          (TwoPair, rank :: rank :: snd_rank :: [ snd_rank ]) (* Two pair *)
-      | snd_rank, _ -> (Pair, rank :: [ rank ]) (* Pair *))
-  | _ ->
-      (* If no duplicates, then played hand must be straight flush, flush,
-         straight, or high card *)
-      if is_flush played then
-        if is_straight played then (StraightFlush, played) else (Flush, played)
-      else if is_straight played then (Straight, played)
-      else (HighCard, [ List.hd dups_lst |> fst ])
+  if snd highest_dups = 5 then
+    if is_flush then (FlushFive, played_hand) (* Flush five *)
+    else (FiveKind, played_hand) (* Five of a kind *)
+  else
+    let snd_highest_dups = List.hd (List.tl dups_lst) in
+    if is_flush && is_straight then (StraightFlush, played_hand)
+      (* Straight flush *)
+    else
+      match highest_dups with
+      | rank, 4 ->
+          ( FourKind,
+            List.filter (fun card -> Card.number card = rank) played_hand )
+          (* Four of a kind *)
+      | rank, 3 -> (
+          match snd_highest_dups with
+          | snd_rank, 2 ->
+              if is_flush then (FlushHouse, played_hand) (* Flush house *)
+              else
+                ( FullHouse,
+                  List.filter (fun card -> Card.number card = rank) played_hand
+                  @ List.filter
+                      (fun card -> Card.number card = snd_rank)
+                      played_hand ) (* Full House *)
+          | snd_rank, _ ->
+              (* Flush > Straight > Three of a kind*)
+              if is_flush then (Flush, played_hand)
+              else if is_straight then (Straight, played_hand)
+              else
+                ( ThreeKind,
+                  List.filter (fun card -> Card.number card = rank) played_hand
+                ))
+      | rank, 2 -> (
+          match snd_highest_dups with
+          | snd_rank, 2 ->
+              (* Flush > Straight > Two pair *)
+              if is_flush then (Flush, played_hand)
+              else if is_straight then (Straight, played_hand)
+              else
+                ( TwoPair,
+                  List.filter (fun card -> Card.number card = rank) played_hand
+                  @ List.filter
+                      (fun card -> Card.number card = snd_rank)
+                      played_hand )
+          | snd_rank, _ ->
+              (* Flush > Straight > Pair *)
+              if is_flush then (Flush, played_hand)
+              else if is_straight then (Straight, played_hand)
+              else
+                ( Pair,
+                  List.filter (fun card -> Card.number card = rank) played_hand
+                ))
+      | _ ->
+          (* Flush > Straight > High card*)
+          if is_flush then (Flush, played_hand)
+          else if is_straight then (Straight, played_hand)
+          else
+            ( HighCard,
+              [
+                List.sort (fun a b -> Card.number b - Card.number a) played_hand
+                |> List.hd;
+              ] )
 
 let played_hand_type hand =
   match hand with
@@ -119,6 +166,9 @@ let played_hand_type hand =
   | FullHouse -> "full house"
   | FourKind -> "four of a kind"
   | StraightFlush -> "straight flush"
+  | FiveKind -> "five of a kind"
+  | FlushHouse -> "flush house"
+  | FlushFive -> "flush five"
 
 let cycle_cards cards hand =
   (* let len = List.length cards in *)
