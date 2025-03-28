@@ -88,6 +88,9 @@ let calculate_mult played =
   Hashtbl.find hand_base_mult_values scored_hand_type
 
 let score_played_cards played =
-  float_of_int (rep_ok_chips (calculate_chips played))
-  *. rep_ok_mult (calculate_mult played)
-  |> ceil |> int_of_float
+  if played = [] then failwith "Cannot score empty hand."
+  else
+
+    float_of_int (rep_ok_chips (calculate_chips played))
+    *. rep_ok_mult (calculate_mult played)
+    |> ceil |> int_of_float

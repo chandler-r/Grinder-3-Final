@@ -1,1 +1,1 @@
-No additional libraries are required to be installed.
+Requires <opam install ansiterminal> prior to running project.
