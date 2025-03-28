@@ -168,19 +168,19 @@ let played_hand_type hand =
   | FlushHouse -> "flush house"
   | FlushFive -> "flush five"
 
-let cycle_cards cards hand =
-  (* let len = List.length cards in *)
+let cycle_cards cards hand deck =
+  let len = List.length cards in
   List.filter (Fun.negate (fun y -> List.mem y cards)) hand
-(*@ Deck.draw len*)
+  @ Deck.draw_cards deck len
 (*TODO: will need to use some Deck.draw function where we draw [len] cards if
   possible*)
 
-let discard cards hand =
+let discard cards hand deck =
   let x = rep_ok_hand cards in
-  cycle_cards x hand
+  cycle_cards x hand deck
 
-let play cards hand =
+let play cards hand deck =
   let x = rep_ok_play cards in
-  (cycle_cards x hand, highest_hand cards)
+  (cycle_cards x hand deck, highest_hand cards)
 
 let to_list cards = cards

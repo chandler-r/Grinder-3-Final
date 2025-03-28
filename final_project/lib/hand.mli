@@ -34,12 +34,12 @@ val highest_hand : Card.t list -> hands * Card.t list
     scoring. [played] must contain at least one element and no more than 5
     elements.*)
 
-val discard : t -> t -> t
+val discard : t -> t -> Deck.t -> t
 (** [discard cards hand] discards a subset of cards in a hand. Should check that
     the number of allowed discards is >0 (if we're allowing discards) and
     replace them with cards from the deck, if available. *)
 
-val play : t -> t -> t * (hands * t)
+val play : t -> t -> Deck.t -> t * (hands * t)
 (** [play cards hand] plays cards from the hand and replaces them with cards
     from the deck, if available. [highest_hand] is a helper function for it.
     Returns the new hand, the highest possible corresponding hand type of the
