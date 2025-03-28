@@ -14,10 +14,6 @@ type suit =
 exception BadCard
 (** [BadCard] is raised when a card is not a part of a standard deck. *)
 
-val create_card : suit -> int -> t
-(** [create_card s n] creates a card with suit [s] and rank [n]. Raises
-    [BadCard] if [n] is not in the range of 1 to 14. *)
-
 val of_pair : string * int -> t
 (** [of_pair (s, n)] is a card with suite [s] and rank [n]. Raises
     [Invalid_argument] if such a card would not be in a standard 52-card deck.

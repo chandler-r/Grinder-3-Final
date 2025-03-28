@@ -11,8 +11,6 @@ type t = suit * int
 
 exception BadCard
 
-let create_card s n : t = if n < 1 || n > 14 then raise BadCard else (s, n)
-
 (** Requires [str] to be one of "spades", "hearts", "diamonds", or "clubs".
     Requires [n] to be between 1 and 14 (inclusive). *)
 let of_pair (str, n) =
