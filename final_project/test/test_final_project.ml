@@ -35,7 +35,7 @@ let tests =
          ( "simple card test suit" >:: fun _ ->
            assert_equal
              (Card.suit (Card.of_pair ("Spades", 5)))
-             "Spades" ~printer:Fun.id );
+             "♠️" ~printer:Fun.id );
          ( "simple card test raise bad suit" >:: fun _ ->
            assert_raises
              (Invalid_argument
@@ -52,7 +52,7 @@ let tests =
          ( "simple card to_string and of_pair test" >:: fun _ ->
            assert_equal
              (Card.to_string (Card.of_pair ("Spades", 5)))
-             "Five of Spades" ~printer:Fun.id );
+             "Five of ♠️" ~printer:Fun.id );
          create_hand_type_test "high card"
            [
              Card.of_pair ("Clubs", 14);
