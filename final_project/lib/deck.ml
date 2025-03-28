@@ -9,13 +9,11 @@ exception NotInDeck
     may containt any number of cards (including duplicates). *)
 
 let init () : t =
-  let suits = [ Card.Spades; Hearts; Diamonds; Clubs ] in
+  let suits = [ "Spades"; "Hearts"; "Diamonds"; "Clubs" ] in
   let ranks = [ 2; 3; 4; 5; 6; 7; 8; 9; 10; 11; 12; 13; 14 ] in
   Array.of_list
     (List.concat
-       (List.map
-          (fun s -> List.map (fun r -> Card.create_card s r) ranks)
-          suits))
+       (List.map (fun s -> List.map (fun r -> Card.of_pair (s, r)) ranks) suits))
 
 let add_card deck card = Array.append deck [| card |]
 let add_modifier deck card = failwith "Not implemented"
