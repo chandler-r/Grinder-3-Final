@@ -66,7 +66,10 @@ let rec get_user_selection cards =
      '1 2 3')\n";
   let input = read_line () in
   try
-    let indices = input |> String.split_on_char ' ' |> List.map int_of_string in
+    let indices =
+      input |> String.split_on_char ' ' |> List.map int_of_string
+      |> List.map (fun x -> x - 1)
+    in
     if List.length indices > 5 then (
       print_endline "You can only select up to 5 cards. Try again.\n";
       get_user_selection cards)
@@ -75,25 +78,26 @@ let rec get_user_selection cards =
       selected_cards
   with
   | Failure _ ->
-      print_endline "Invalid input. Please enter valid indicies.\n";
+      print_endline "\nInvalid input. Please enter valid indicies.\n";
       get_user_selection cards
   | Invalid_argument _ ->
-      print_endline "One or more indicies are out of range. Try again.\n";
+      print_endline "\nOne or more indicies are out of range. Try again.\n";
       get_user_selection cards
 
-let test_hand = [
-  Card.of_pair ("Spades", 10);
-  Card.of_pair ("Spades", 10);
-  Card.of_pair ("Spades", 10);
-  Card.of_pair ("Spades", 10);
-  Card.of_pair ("Spades", 10);
-  Card.of_pair ("Spades", 10);
-  Card.of_pair ("Spades", 10);
-]
+let test_hand =
+  [
+    Card.of_pair ("Spades", 10);
+    Card.of_pair ("Spades", 10);
+    Card.of_pair ("Spades", 10);
+    Card.of_pair ("Spades", 10);
+    Card.of_pair ("Spades", 10);
+    Card.of_pair ("Spades", 10);
+    Card.of_pair ("Spades", 10);
+  ]
 
 let () =
-  let cards = generate_rand_hand () in
-  let selected_hand = get_user_selection cards in
+  (* let cards = generate_rand_hand () in *)
+  let selected_hand = get_user_selection test_hand in
   print_endline "You selected the following card:\n";
   print_endline (card_list_printer selected_hand);
 
