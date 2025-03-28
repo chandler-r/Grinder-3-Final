@@ -1,0 +1,34 @@
+---
+# Members of your group.
+group:  
+  - name: Aarav Manjunath
+    netid: asm374
+  - name: Jason Jang
+    netid: jsj84
+  - name: Roberto Leon
+    netid: ril33
+  - name: Nora Fayyazuddin Ljungberg
+    netid: nef33
+  - name: Chandler Reyes
+    netid: cr595
+
+# Your PM.
+pm:
+  name: David Goldfarb
+  netid: dg646
+# Set to false if you don't want your gallery entry to be public.
+publish: true
+# Pithy title
+title: "BalatrOCaml"
+# OK if this is a Cornell Github link, but public gallery viewers won't be able to see it.
+git-repo: "https://github.com/chandler-r/Grinder-3-Final"
+# Replace the URL with your own demo video.
+demo-video-url: "FIXME https://www.youtube.com/watch?v=eSBybJGZoCU"
+# Write a short, attention-grabbing description of your project.
+desc: >
+  Our project is a simplified version of Balatro. It currently supports a
+  user drawing cards to make a hand, and playing that hand to receive a score.
+  The user interface is a TUI which prints the user's hand in a friendly
+  manner.
+
+  Scoring is based on standard Balatro scoring.
