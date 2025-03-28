@@ -33,10 +33,10 @@ let number (s, n) = if n = 1 then 14 else n
 (* Helper function that converts something of type [suit] to a string. *)
 let string_of_suit s =
   match s with
-  | Spades -> "Spades"
-  | Hearts -> "Hearts"
-  | Diamonds -> "Diamonds"
-  | Clubs -> "Clubs"
+  | Spades -> "♠️"
+  | Hearts -> "❤️"
+  | Diamonds -> "♦️"
+  | Clubs -> "♣️"
 
 (* Helper function that converts the number of a card to its rank. *)
 let string_of_number n =
