@@ -18,7 +18,7 @@ type hands =
 
 exception TooManyCards
 
-let hand_size = ref 7
+let hand_size = ref 5
 let play_limit = ref 5
 let hands_per_round = ref 3
 
@@ -96,8 +96,8 @@ let highest_hand played =
   if snd highest_dups = 5 then
     if is_flush then (FlushFive, played_hand) (* Flush five *)
     else (FiveKind, played_hand) (* Five of a kind *)
-  else
-    let snd_highest_dups = List.hd (List.tl dups_lst) in
+  else 
+    let snd_highest_dups = if List.length dups_lst > 1 then List.hd (List.tl dups_lst) else (0,0) in
     if is_flush && is_straight then (StraightFlush, played_hand)
       (* Straight flush *)
     else
