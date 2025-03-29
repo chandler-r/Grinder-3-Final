@@ -1,0 +1,281 @@
+commit f7277e6c91b07af344b93f6902b582aec536c01f
+Author: Aarav <asm374@cornell.edu>
+Date:   Fri Mar 28 22:08:32 2025 -0400
+
+    small changes to install, description, and driver files
+
+commit eb5386da6e42a057a85bba0f7c495e20e218bf1b
+Author: ril33 <ril33@cornell.edu>
+Date:   Fri Mar 28 20:01:31 2025 -0400
+
+    Added youtube demo
+
+commit 31650f9e3df3c759643bfb05362c97cf67a632eb
+Merge: 5ac59ee 2541c19
+Author: ril33 <ril33@cornell.edu>
+Date:   Fri Mar 28 19:42:08 2025 -0400
+
+    Merge remote-tracking branch 'refs/remotes/origin/main'
+
+commit 5ac59ee95f77e9cddbad662ec87f1c33dbc2f343
+Author: ril33 <ril33@cornell.edu>
+Date:   Fri Mar 28 19:40:16 2025 -0400
+
+    modified init
+
+commit e0ed690c2f5a396fe4ecaaaa270e3a9f5c7f711e
+Author: ril33 <ril33@cornell.edu>
+Date:   Fri Mar 28 19:40:09 2025 -0400
+
+    removed create_card
+
+commit 2541c19f4961f4c67999dd828bef34bd30125d4e
+Author: Nora Fayyazuddin Ljungberg <nef33@cornell.edu>
+Date:   Fri Mar 28 07:02:01 2025 -0400
+
+    Integrated Deck functions with Hand
+    
+    - Can now draw cards from the deck whenever cards are played or
+    discarded
+
+commit baa4a5ffc3be0fb46cf1de570c6bb7d02041d216
+Author: Aarav <asm374@cornell.edu>
+Date:   Fri Mar 28 06:00:15 2025 -0400
+
+    updated install file to include requiring ansiterminal
+
+commit 13e8989977d6381f10940a72d0b0cb468ba97b06
+Author: Jason Jang <jsj84@cornell.edu>
+Date:   Fri Mar 28 03:43:15 2025 -0400
+
+    Fix tests
+    
+    - Fixed tests to account for new card suit emojis
+
+commit 669b4fa259af57c3efcae7cc9d846771e7adf819
+Author: Chandler <cr595@cornell.edu>
+Date:   Fri Mar 28 02:11:36 2025 -0400
+
+    changed indexing for user input to (1, n) instead of (0, n-1)
+
+commit c4dc3f965bea6752dba324cc886d0d45c0c806ee
+Author: Chandler <cr595@cornell.edu>
+Date:   Fri Mar 28 01:57:41 2025 -0400
+
+    completed basic driver file which creates a random hand of 8 cards and allows player to choose cards to be scored, fixed issue where highest_hand would fail because it was trying to find the next highest duplicate card in a dupe list of length 1, added fail safe for scoring empty hand
+
+commit 1b20936a52725a6bba1272b6b3485c85adb62604
+Merge: cfaf859 2b6ca40
+Author: ril33 <ril33@cornell.edu>
+Date:   Fri Mar 28 01:17:17 2025 -0400
+
+    Merge remote-tracking branch 'refs/remotes/origin/main'
+
+commit cfaf859251e854709688bd8551eeae6cf039531c
+Author: ril33 <ril33@cornell.edu>
+Date:   Fri Mar 28 01:09:36 2025 -0400
+
+    Implemented the create_card function
+
+commit 231678709080a0216ae17c65d833ff6c7ce4c30e
+Author: ril33 <ril33@cornell.edu>
+Date:   Fri Mar 28 01:09:00 2025 -0400
+
+    Exposed suit and added a create_card signatutre for the deck.ml file
+
+commit e1a7c0aa03470431f31178d7f04e5b40acaf4fc6
+Author: ril33 <ril33@cornell.edu>
+Date:   Fri Mar 28 01:08:31 2025 -0400
+
+    Implemented all of the functions specified in the .mli file
+
+commit 4b561c96edce62842137b9f720b116eec7924f4f
+Author: ril33 <ril33@cornell.edu>
+Date:   Fri Mar 28 01:07:56 2025 -0400
+
+    Fixed signatures
+
+commit 2b6ca40887271f59f002769aec75120830cba953
+Author: Chandler <cr595@cornell.edu>
+Date:   Thu Mar 27 22:55:01 2025 -0400
+
+    started driver development, changed suits to emojis to allow for easier visual recognition
+
+commit 8d8016db38c5695dec7660f1d4e067dd0f0eb6a3
+Author: Aarav <asm374@cornell.edu>
+Date:   Thu Mar 27 18:46:38 2025 -0400
+
+    Add info files
+    
+    - Authors file, install file, moved readme file
+    - added description yaml file
+
+commit 69288b19943c6866d2904054db48fe2c153de70d
+Author: ril33 <ril33@cornell.edu>
+Date:   Thu Mar 27 12:26:59 2025 -0400
+
+    Modified some syntax
+
+commit 37cc9180bd58298770c9c751183f0353122eab82
+Author: ril33 <ril33@cornell.edu>
+Date:   Thu Mar 27 12:26:01 2025 -0400
+
+    Added signatures for deck functions
+
+commit 7eec3b153f23bd83114f5de2df988205524d6fbe
+Author: ril33 <ril33@cornell.edu>
+Date:   Thu Mar 27 12:16:15 2025 -0400
+
+    Deck files
+
+commit 13f7e5b5d359d04ff4a8bfe2dc1345a784503b91
+Author: Jason Jang <jsj84@cornell.edu>
+Date:   Thu Mar 27 00:29:13 2025 -0400
+
+    Revise scoring
+    
+    - Fixed bugs in <highest_hand>, <score_played_cards> functions
+    - Added "secret" hands: five of a kind, flush house, and flush five
+    - Revised interfaces accordingly
+    - Added unit tests for <highest_hand> and <score_played_cards>
+
+commit 274e47434756519aa25771b29f0a34a3e7644339
+Author: Jason Jang <jsj84@cornell.edu>
+Date:   Wed Mar 26 23:00:39 2025 -0400
+
+    Implement scoring and hand types
+    
+    - Modified <highest_hand> function to find the highest hand type possible from a given set of played cards, and the cards that will be used for scoring that hand
+    - Added <played_hand_type> function to get hand types as strings
+    - Revised <hand> interface accordingly
+    - Added <scoring> compilation unit
+    - Implemented <calculate_chips>, <calculate_mult>, and <score_played_cards> functions to mimic Balatro's scoring system for played cards
+
+commit 3f246924ac200bf7ed058092a30674836bbf5af5
+Author: Jason Jang <jsj84@cornell.edu>
+Date:   Wed Mar 26 18:41:12 2025 -0400
+
+    Fix <hand.ml>
+    
+    - Commented out line 35 ("let let = List.length cards in" line) so code will compile
+
+commit a48b14a0225a330d7a5a546ee1f1b7e7c2b6f1a3
+Author: Nora Fayyazuddin Ljungberg <nef33@cornell.edu>
+Date:   Wed Mar 26 14:54:57 2025 -0400
+
+    Write hand.ml functions
+    
+    - Implemented several interface specifications in the Hand
+    implementation file
+    - Updated interface file based on new needs
+
+commit 3888c5ff7a6b29ad6fc918d25282cdaaec785586
+Author: Aarav <asm374@cornell.edu>
+Date:   Tue Mar 25 19:13:45 2025 -0400
+
+    fixed test cases
+
+commit c53e7aeaa87d8a60984932081f21d0a2adb9c665
+Author: Aarav <asm374@cornell.edu>
+Date:   Tue Mar 25 19:11:27 2025 -0400
+
+    Add joker mli and ml
+
+commit b2bdeb7ea85efabc837d699cc432d2317bc8ffd9
+Author: Aarav <asm374@cornell.edu>
+Date:   Tue Mar 25 19:10:05 2025 -0400
+
+    added specification comments to card module
+
+commit 7c4de571134dbbe245d1cfbdf15ce9638bd8b6fb
+Author: Aarav <asm374@cornell.edu>
+Date:   Tue Mar 25 18:36:16 2025 -0400
+
+    Implement basic card functionality
+    
+    - of_pair, number, suit, to_string
+    - minimal test cases
+
+commit 858cf04aad2f1a8cdd533475addd0187f61c2dc1
+Author: Nora Fayyazuddin Ljungberg <nef33@cornell.edu>
+Date:   Tue Mar 25 17:21:02 2025 -0400
+
+    Update Hand interface
+
+commit 86049a1414aea4de35349e41407868b043fdd3b7
+Author: Nora Fayyazuddin Ljungberg <nef33@cornell.edu>
+Date:   Tue Mar 25 17:20:40 2025 -0400
+
+    Create hand interface
+    
+    - Added types, variables, and functions for Hand module
+    - Updated implementation file with dummy functions for now
+
+commit 7d5fd55a32c0ca59c637fc45aacbed73792c39c8
+Merge: 26725dc 6454aa6
+Author: norafl <norafl@gmail.com>
+Date:   Tue Mar 25 09:19:09 2025 -0400
+
+    Merge pull request #2 from norafl/main
+    
+    Initialize dune project
+
+commit 6454aa6dc0d37f97afda09bcd5d8adb0cceb7287
+Merge: 5e994cc 26725dc
+Author: norafl <norafl@gmail.com>
+Date:   Tue Mar 25 09:18:16 2025 -0400
+
+    Merge branch 'chandler-r:main' into main
+
+commit 5e994cc5c8f337d12b131f65413763670c067edf
+Author: Nora Fayyazuddin Ljungberg <nef33@cornell.edu>
+Date:   Tue Mar 25 09:15:50 2025 -0400
+
+    Initialize dune project
+
+commit 26725dc8d96654f6ce8c232f3f43edee46c2e7bc
+Author: Aarav <asm374@cornell.edu>
+Date:   Mon Mar 24 16:31:31 2025 -0400
+
+    added Aarav to readme
+
+commit 9c2af52e0381d2af23cb670844dbb2b8975e14ee
+Author: Jason Jang <jsj84@cornell.edu>
+Date:   Mon Mar 24 16:27:59 2025 -0400
+
+    Initial commit
+    
+    - Added name to README.md
+
+commit 90eb5a7472e2d4c346da9c63824f05855016dad4
+Author: Robylongo <roberto.i.leon@gmail.com>
+Date:   Tue Mar 11 17:26:34 2025 -0400
+
+    Update README.md
+
+commit c2c3f7a8c8f3df805924687958ab61747ee686b9
+Merge: 374e1a4 cf85d82
+Author: Chandler Reyes <71078006+chandler-r@users.noreply.github.com>
+Date:   Tue Mar 11 16:50:10 2025 -0400
+
+    Merge pull request #1 from norafl/main
+    
+    Updated authors file
+
+commit cf85d823c68de2327037f23828d427063d6e332f
+Author: Nora Fayyazuddin Ljungberg <nef33@cornell.edu>
+Date:   Tue Mar 11 16:44:16 2025 -0400
+
+    Updated authors file
+
+commit 374e1a42d79e94805035cf012c8e2b23bab9c8df
+Author: Chandler <cr595@cornell.edu>
+Date:   Tue Mar 11 14:41:47 2025 -0400
+
+    Initialized repo and readme.md, added name+ net id first commit from Chandler
+
+commit fcd3659d763c030821f6f1ea307ddb6c2b6e699c
+Author: Chandler Reyes <71078006+chandler-r@users.noreply.github.com>
+Date:   Tue Mar 11 14:39:31 2025 -0400
+
+    Initial commit
