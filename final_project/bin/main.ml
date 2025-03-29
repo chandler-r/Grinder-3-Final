@@ -96,8 +96,8 @@ let test_hand =
   ]
 
 let () =
-  (* let cards = generate_rand_hand () in *)
-  let selected_hand = get_user_selection test_hand in
+  let cards = generate_rand_hand () in
+  let selected_hand = get_user_selection cards in
   print_endline "You selected the following card:\n";
   print_endline (card_list_printer selected_hand);
 

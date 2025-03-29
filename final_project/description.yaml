@@ -17,7 +17,7 @@ pm:
   name: David Goldfarb
   netid: dg646
 # Set to false if you don't want your gallery entry to be public.
-publish: true
+publish: false
 # Pithy title
 title: "BalatrOCaml"
 # OK if this is a Cornell Github link, but public gallery viewers won't be able to see it.
@@ -28,7 +28,8 @@ demo-video-url: "https://youtu.be/ZV0XgF6TOFE"
 desc: >
   Our project is a simplified version of Balatro. It currently supports a
   user drawing cards to make a hand, and playing that hand to receive a score.
-  The user interface is a TUI which prints the user's hand in a friendly
-  manner.
+  The user interface is a TUI which prints the user's options in a friendly
+  manner, asks the user to select a hand, and provides the score and type
+  of the selected hand.
 
   Scoring is based on standard Balatro scoring.
