@@ -5,7 +5,7 @@ type hands
 (** The type representing the different types of hand that can be played. *)
 
 exception TooManyCards
-(**Rraised if the player tries to play a hand with more cards than what is
+(**Raised if the player tries to play a hand with more cards than what is
    allowed. *)
 
 (*Functionality:

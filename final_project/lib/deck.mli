@@ -1,4 +1,4 @@
-open Card
+(* open Card *)
 
 type t
 
@@ -11,18 +11,22 @@ val init : unit -> t
     different makeups of cards *)
 
 val add_card : t -> Card.t -> t
-(** [add_card c] adds the card c into the deck. This means decks are allowed to
-    go above 52 cards. *)
+(** [add_card d c] adds the card [c] into the deck [d]. This means decks are
+    allowed to go above 52 cards. *)
 
 val add_modifier : t -> Card.t -> t
 (** TODO: Wait till later, might have to modify the card module in order to
     accomodate this, stretch goal. *)
 
 val remove_card : t -> Card.t -> t
-(** [remove card c] removes c from the deck. The card has to be in the deck,
-    raises NotInDeck exception if not. This means decks are allowed to go under
-    52 cards. *)
+(** [remove_card d c] removes card [c] from deck [d]. The card has to be in the
+    deck, raises NotInDeck exception if not. This means decks are allowed to go
+    under 52 cards. *)
 
 val draw_cards : t -> int -> Card.t list
-(** [draw_cards n] draws n cards and returns them in a list. The cards are drawn
-    at random. *)
+(** [draw_cards d n] draws [n] cards from [d] and returns them in a list. The
+    cards are drawn at random. Raises [Failure] if [d] has less than [n] cards.
+*)
+
+val to_list : t -> Card.t list
+(** [to_list d] is all the cards in a deck [d]. *)

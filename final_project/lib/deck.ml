@@ -1,4 +1,4 @@
-open Card
+(* open Card *)
 
 type t = Card.t array
 
@@ -40,3 +40,5 @@ let draw_cards deck n =
     current_length := !current_length - 1
   done;
   List.rev !drawn_cards
+
+let to_list deck = Array.to_list deck
