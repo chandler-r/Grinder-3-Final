@@ -1,3 +1,11 @@
+commit 8c0dd83c9c0643cfffa759f5d9c00aa5dffccc9f
+Author: Jason Jang <jsj84@cornell.edu>
+Date:   Fri Mar 28 23:35:25 2025 -0400
+
+    Revise INSTALL.md
+    
+    - Made a copy of INSTALL.md file to root directory (what's opened after downloading the project, unzipping, and changing to that directory) and edited it to specify that user needs to change directory to <final_project> from project root before running <dune exec bin/main.exe>
+
 commit f7277e6c91b07af344b93f6902b582aec536c01f
 Author: Aarav <asm374@cornell.edu>
 Date:   Fri Mar 28 22:08:32 2025 -0400

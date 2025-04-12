@@ -1,20 +1,3 @@
-type t = int
-type chips = int
-type mult = float
-
-(* AF: [x : t] is the total score earned by a player in the current round. [y : chips] is the number of chips a player has earned from playing a hand. [z : mult] is the score multiplier a player has earned from playing a hand. *)
-(* RI: The integers representing the score and the number of chips must be nonnegative. The float representing the multiplier must be greater than or equal to 1.0. *)
-
-let get_score score = score
-let get_chips chips = chips
-let get_mult mult = mult
-
-exception InvalidScoring
-
-let rep_ok_score score = if score >= 0 then score else raise InvalidScoring
-let rep_ok_chips chips = if chips >= 0 then chips else raise InvalidScoring
-let rep_ok_mult mult = if mult >= 1.0 then mult else raise InvalidScoring
-
 (* The following definition was inspired by the example from
    https://ocaml.org/manual/5.3/api/Hashtbl.html*)
 
@@ -87,10 +70,34 @@ let calculate_mult played =
   let scored_hand_type = fst scored_hand_data |> Hand.played_hand_type in
   Hashtbl.find hand_base_mult_values scored_hand_type
 
+let calculate_card_contribution_acc (chips_acc, mult_acc) card =
+  let new_chips =
+    chips_acc + Hashtbl.find card_base_chip_values (Card.number card)
+  in
+  let new_mult = mult_acc in
+  print_endline
+    ("Scored " ^ Card.to_string card ^ ": " ^ string_of_int new_chips ^ " x "
+   ^ string_of_float new_mult);
+  (new_chips, new_mult)
+
 let score_played_cards played =
   if played = [] then failwith "Cannot score empty hand."
   else
-
-    float_of_int (rep_ok_chips (calculate_chips played))
-    *. rep_ok_mult (calculate_mult played)
-    |> ceil |> int_of_float
+    let scored_hand_data = Hand.highest_hand played in
+    let scored_hand_cards = snd scored_hand_data in
+    let scored_hand_type = fst scored_hand_data |> Hand.played_hand_type in
+    let base_chips = Hashtbl.find hand_base_chip_values scored_hand_type in
+    let base_mult = Hashtbl.find hand_base_mult_values scored_hand_type in
+    print_endline
+      ("Base : " ^ string_of_int base_chips ^ " x " ^ string_of_float base_mult);
+    let total_chips, total_mult =
+      List.fold_left calculate_card_contribution_acc (base_chips, base_mult)
+        scored_hand_cards
+    in
+    let result =
+      float_of_int total_chips *. total_mult |> ceil |> int_of_float
+    in
+    print_endline
+      ("Total : " ^ string_of_int total_chips ^ " x "
+     ^ string_of_float total_mult ^ " = " ^ string_of_int result);
+    result
