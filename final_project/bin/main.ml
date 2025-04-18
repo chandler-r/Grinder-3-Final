@@ -1,6 +1,10 @@
 module Card = Final_project.Card
 module Hand = Final_project.Hand
 module Score = Final_project.Scoring
+module Deck = Final_project.Deck
+
+let money = ref 0
+let deck = ref (Deck.init ())
 
 let card_list_printer cards =
   if List.length cards = 0 then "None"
@@ -41,22 +45,12 @@ let card_list_printer cards =
     done;
     Buffer.contents buffer
 
-let generate_rand_hand () =
-  Random.self_init ();
-  let hand = ref [] in
-  for _ = 0 to 7 do
-    let rank = Random.int 13 + 1 in
-    let suit =
-      match Random.int 4 with
-      | 0 -> "Spades"
-      | 1 -> "Hearts"
-      | 2 -> "Diamonds"
-      | _ -> "Clubs"
-    in
-    let card = Card.of_pair (suit, rank) in
-    hand := card :: !hand
-  done;
-  !hand
+(* Depreciated
+
+   let generate_rand_hand () = Random.self_init (); let hand = ref [] in for _ =
+   0 to 7 do let rank = Random.int 13 + 1 in let suit = match Random.int 4 with
+   | 0 -> "Spades" | 1 -> "Hearts" | 2 -> "Diamonds" | _ -> "Clubs" in let card
+   = Card.of_pair (suit, rank) in hand := card :: !hand done; !hand *)
 
 let rec get_user_selection cards =
   print_endline "Here are the available cards:";
@@ -96,7 +90,11 @@ let test_hand =
   ]
 
 let () =
-  let cards = generate_rand_hand () in
+  let deck_copy = Deck.copy_deck !deck in
+  (* Choose how many cards are drawn. When running the game loop we should reset
+     deck_copy every round and only modify the global deck variable when adding
+     or removing stuff. *)
+  let cards = Deck.draw_cards deck_copy 7 in
   let selected_hand = get_user_selection cards in
   print_endline "You selected the following card:\n";
   print_endline (card_list_printer selected_hand);
