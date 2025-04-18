@@ -15,7 +15,7 @@ let init () : t =
     (List.concat
        (List.map (fun s -> List.map (fun r -> Card.of_pair (s, r)) ranks) suits))
 
-let add_card deck card = Array.append deck [| card |]
+let add_card deck (card : Card.t) = Array.append deck [| card |]
 let add_modifier deck card = failwith "Not implemented"
 
 let remove_card deck card =
