@@ -27,7 +27,7 @@ let remove_card deck card =
   in
   Array.of_list (remove lst)
 
-let draw_cards deck n =
+let draw_cards deck n : Card.t list =
   let deck_copy = Array.copy deck in
   let current_length = ref (Array.length deck_copy) in
   let drawn_cards = ref [] in
@@ -41,4 +41,5 @@ let draw_cards deck n =
   done;
   List.rev !drawn_cards
 
+let copy_deck deck : Card.t array = Array.copy deck
 let to_list deck = Array.to_list deck
