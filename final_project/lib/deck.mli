@@ -28,5 +28,8 @@ val draw_cards : t -> int -> Card.t list
     cards are drawn at random. Raises [Failure] if [d] has less than [n] cards.
 *)
 
+val copy_deck : t -> t
+(** [copy_deck d] returns a copy of the deck [d]. *)
+
 val to_list : t -> Card.t list
 (** [to_list d] is all the cards in a deck [d]. *)
