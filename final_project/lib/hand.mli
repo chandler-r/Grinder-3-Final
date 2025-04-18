@@ -12,6 +12,10 @@ exception TooManyCards
 
   check highest-scoring version of a collection of cards*)
 
+val create_hands : string -> hands
+(** [create_hands hand] creates an item of type hands which corresponds to the
+    string [hand]. Helper function used for creating planet cards. *)
+
 val hand_size : int ref
 (** [hand_size] is the maximum number of cards a player can have in their hand.
 *)
