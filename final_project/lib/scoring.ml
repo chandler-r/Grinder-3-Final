@@ -96,7 +96,7 @@ let level_up_hand (hand : Hand.hands) =
 
   let prev_mult = Hashtbl.find hand_base_mult_values hand_type in
   Hashtbl.replace hand_base_mult_values hand_type (prev_mult +. bonus_mult);
-  Printf.printf "Leveled up %s to level %d" hand_type (prev_level + 1)
+  Printf.printf "Leveled up %s to level %d!\n" hand_type (prev_level + 1)
 
 (** Helper function to visualize hands in system output. *)
 let card_list_printer cards =
