@@ -46,6 +46,58 @@ let () =
   Hashtbl.add hand_base_mult_values "flush house" 14.;
   Hashtbl.add hand_base_mult_values "flush five" 16.
 
+(** The levels of all current hands. *)
+let hand_levels = Hashtbl.create 12
+
+let () =
+  Hashtbl.add hand_levels "high card" 1;
+  Hashtbl.add hand_levels "pair" 1;
+  Hashtbl.add hand_levels "two pair" 1;
+  Hashtbl.add hand_levels "three of a kind" 1;
+  Hashtbl.add hand_levels "straight" 1;
+  Hashtbl.add hand_levels "flush" 1;
+  Hashtbl.add hand_levels "full house" 1;
+  Hashtbl.add hand_levels "four of a kind" 1;
+  Hashtbl.add hand_levels "straight flush" 1;
+  Hashtbl.add hand_levels "five of a kind" 1;
+  Hashtbl.add hand_levels "flush house" 1;
+  Hashtbl.add hand_levels "flush five" 1
+
+(** [match_hand_to_level_up_bonus hand] returns the tuple (c,m) corresponding to
+    a hand type, where c and m are how many chips/what multiplier is added to
+    the base value when the hand levels up. *)
+let match_hand_to_level_up_bonus (hand : string) =
+  match hand with
+  | "high card" -> (10, 1.)
+  | "pair" -> (15, 1.)
+  | "two pair" -> (20, 1.)
+  | "three of a kind" -> (20, 2.)
+  | "straight" -> (30, 2.)
+  | "flush" -> (15, 2.)
+  | "full house" -> (25, 2.)
+  | "four of a kind" -> (30, 3.)
+  | "straight flush" -> (40, 3.)
+  | "five of a kind" -> (35, 3.)
+  | "flush house" -> (40, 3.)
+  | "flush five" -> (40, 3.)
+  | _ -> failwith "Unknown hand type."
+
+(** [level_up_hand hand] modifies the hashtable values for the hand, [hand].
+    Hand level goes up by 1 and the chips and mult update accordingly. *)
+let level_up_hand (hand : Hand.hands) =
+  let hand_type = Hand.played_hand_type hand in
+  let bonus_chips, bonus_mult = match_hand_to_level_up_bonus hand_type in
+
+  let prev_level = Hashtbl.find hand_levels hand_type in
+  Hashtbl.replace hand_levels hand_type (prev_level + 1);
+
+  let prev_chips = Hashtbl.find hand_base_chip_values hand_type in
+  Hashtbl.replace hand_base_chip_values hand_type (prev_chips + bonus_chips);
+
+  let prev_mult = Hashtbl.find hand_base_mult_values hand_type in
+  Hashtbl.replace hand_base_mult_values hand_type (prev_mult +. bonus_mult);
+  Printf.printf "Leveled up %s to level %d" hand_type (prev_level + 1)
+
 (** Helper function to visualize hands in system output. *)
 let card_list_printer cards =
   if List.length cards = 0 then "None"
