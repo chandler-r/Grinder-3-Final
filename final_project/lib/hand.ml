@@ -28,6 +28,22 @@ let rep_ok_hand hand =
 let rep_ok_play play =
   if List.length play <= !play_limit then play else raise TooManyCards
 
+let create_hands hand =
+  match hand with
+  | "high card" -> HighCard
+  | "pair" -> Pair
+  | "two pair" -> TwoPair
+  | "three of a kind" -> ThreeKind
+  | "straight" -> Straight
+  | "flush" -> Flush
+  | "full house" -> FullHouse
+  | "four of a kind" -> FourKind
+  | "straight flush" -> StraightFlush
+  | "five of a kind" -> FiveKind
+  | "flush house" -> FlushHouse
+  | "flush five" -> FlushFive
+  | _ -> failwith "Unknown hand type."
+
 (** [count_dup_ranks [] card_lst] is an association list matching a rank to the
     number of times a card in [card_lst] has that rank. *)
 let rec count_dup_ranks acc (card_lst : Card.t list) =
