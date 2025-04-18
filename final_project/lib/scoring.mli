@@ -1,3 +1,7 @@
+val level_up_hand : Hand.hands -> unit
+(** [level_up_hand hand] modifies the hashtable values for the hand, [hand].
+    Hand level goes up by 1 and the chips and mult update accordingly. *)
+
 val calculate_chips : Card.t list -> int
 (** [calculate_chips played] is the total number of chips earned from playing
     all the cards in [played] at one time. The number of chips is represented as
