@@ -27,6 +27,7 @@ let open_shop (money : int ref) (deck : Deck.t ref) (jokers : Joker.t array ref)
   let purchases = ref [] in
 
   while !shopping do
+    Unix.sleep 3;
     print_endline
       "\n==================== WELCOME TO THE SHOP ====================";
     Printf.printf "💰 You have $%d\n" !money;
