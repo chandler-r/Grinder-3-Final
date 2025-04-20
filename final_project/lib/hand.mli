@@ -51,3 +51,6 @@ val play : t -> t -> Deck.t -> t * (hands * t)
 
 val to_list : t -> Card.t list
 (** [to_list cards] returns a list of cards in hand. *)
+
+val to_hand : Card.t list -> t
+(** [to_hand lst] turns a list of cards into a [Hand.t] representation. *)

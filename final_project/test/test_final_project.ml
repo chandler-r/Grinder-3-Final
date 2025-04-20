@@ -381,8 +381,46 @@ let scoring_tests =
       ];
   ]
 
+let dummy_deck = Deck.init ()
+let dummy_hand = Hand.to_hand (Deck.draw_cards dummy_deck 5)
+
+let rec pick_n n hand =
+  let card_list = Hand.to_list hand in
+  match n with
+  | 0 -> []
+  | _ -> List.nth card_list (n - 1) :: pick_n (n - 1) hand
+
+let play_check num_cards =
+  if num_cards > 5 || num_cards = 0 then true
+  else
+    let play, (hand, sth) =
+      Hand.play
+        (Hand.to_hand (pick_n num_cards dummy_hand))
+        dummy_hand dummy_deck
+    in
+    List.length (Hand.to_list play) = 5
+
+let play_test = QCheck.(Test.make ~count:10 ~name:"play" small_nat play_check)
+
+let discard_check num_cards =
+  if num_cards > 5 || num_cards = 0 then true
+  else
+    let disc =
+      Hand.discard
+        (Hand.to_hand (pick_n num_cards dummy_hand))
+        dummy_hand dummy_deck
+    in
+    List.length (Hand.to_list disc) = 5
+
+let discard_test =
+  QCheck.(Test.make ~count:10 ~name:"discard" small_nat discard_check)
+
+let play_disc_tests =
+  List.map QCheck_runner.to_ounit2_test [ play_test; discard_test ]
+
 let tests =
   "tests"
   >::: List.flatten [ card_tests; deck_tests; hand_tests; scoring_tests ]
+       @ play_disc_tests
 
 let _ = run_test_tt_main tests

@@ -24,9 +24,11 @@ let hands_per_round = ref 3
 
 let rep_ok_hand hand =
   if List.length hand <= !hand_size then hand else raise TooManyCards
+[@@coverage off]
 
 let rep_ok_play play =
   if List.length play <= !play_limit then play else raise TooManyCards
+[@@coverage off]
 
 let create_hands hand =
   match hand with
@@ -188,8 +190,6 @@ let cycle_cards cards hand deck =
   let len = List.length cards in
   List.filter (Fun.negate (fun y -> List.mem y cards)) hand
   @ Deck.draw_cards deck len
-(*TODO: will need to use some Deck.draw function where we draw [len] cards if
-  possible*)
 
 let discard cards hand deck =
   let x = rep_ok_hand cards in
@@ -200,3 +200,4 @@ let play cards hand deck =
   (cycle_cards x hand deck, highest_hand cards)
 
 let to_list cards = cards
+let to_hand cards = cards
