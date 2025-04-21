@@ -122,17 +122,20 @@ let calculate_mult played =
   let scored_hand_type = fst scored_hand_data |> Hand.played_hand_type in
   Hashtbl.find hand_base_mult_values scored_hand_type
 
-let calculate_card_contribution_acc (chips_acc, mult_acc) card =
-  let new_chips =
+let calculate_card_contribution_acc jokers (chips_acc, mult_acc) card =
+  let chips =
     chips_acc + Hashtbl.find card_base_chip_values (Card.number card)
   in
-  let new_mult = mult_acc in
+  let mult = mult_acc in
   print_endline
-    ("Scored " ^ Card.to_string card ^ ": " ^ string_of_int new_chips ^ " x "
-   ^ string_of_float new_mult);
+    ("Scored " ^ Card.to_string card ^ ": " ^ string_of_int chips ^ " x "
+   ^ string_of_float mult);
+  let new_chips, new_mult =
+    Joker.apply_scoring_jokers_to_card jokers card chips mult
+  in
   (new_chips, new_mult)
 
-let score_played_cards played =
+let score_played_cards played jokers =
   if played = [] then failwith "Cannot score empty hand."
   else
     let scored_hand_data = Hand.highest_hand played in
@@ -143,8 +146,9 @@ let score_played_cards played =
     print_endline
       ("Base : " ^ string_of_int base_chips ^ " x " ^ string_of_float base_mult);
     let total_chips, total_mult =
-      List.fold_left calculate_card_contribution_acc (base_chips, base_mult)
-        scored_hand_cards
+      List.fold_left
+        (calculate_card_contribution_acc jokers)
+        (base_chips, base_mult) scored_hand_cards
     in
     let result =
       float_of_int total_chips *. total_mult |> ceil |> int_of_float

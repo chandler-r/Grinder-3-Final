@@ -22,7 +22,7 @@ let create_basic_scoring_test expected cards =
   ^ string_of_int expected
   >:: fun _ ->
   assert_equal expected
-    (Scoring.score_played_cards cards)
+    (Scoring.score_played_cards cards [||])
     ~printer:string_of_int
 
 let card_tests =

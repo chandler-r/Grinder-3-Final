@@ -14,11 +14,12 @@ val calculate_mult : Card.t list -> float
     [played] must contain at least 1 card and no more than [Hand.play_limit]
     cards. *)
 
-val score_played_cards : Card.t list -> int
-(** [score_played_cards played] is the total score earned from playing all the
-    cards in [played] at one time, calculated by multiplying the number of chips
-    earned from the hand by the multiplier earned from the hand. As each card is
-    scored, a running total of the chips and the multiplier is printed, along
-    with the card that is being scored. The number of chips is an integer, the
-    multiplier is a float, and the score is an integer. [played] must contain at
-    least 1 card and no more than [Hand.play_limit] cards. *)
+val score_played_cards : Card.t list -> Joker.t array -> int
+(** [score_played_cards played jokers] is the total score earned from playing
+    all the cards in [played] at one time while having all the jokers in
+    [jokers], calculated by multiplying the number of chips earned from the hand
+    by the multiplier earned from the hand. As each card is scored, a running
+    total of the chips and the multiplier is printed, along with the card that
+    is being scored and any jokers that are applied. The number of chips is an
+    integer, the multiplier is a float, and the score is an integer. [played]
+    must contain at least 1 card and no more than [Hand.play_limit] cards. *)

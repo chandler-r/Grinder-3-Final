@@ -7,7 +7,7 @@ module Shop = Final_project.Shop
 
 let money = ref 50
 let deck = ref (Deck.init ())
-let jokers = ref [| Joker.make_joker () |]
+let jokers = ref [|Joker.Scholar; Joker.OddTodd; Joker.EvenSteven; Joker.Bloodstone; Joker.Triboulet|]
 
 let card_list_printer cards =
   if List.length cards = 0 then "None"
@@ -105,7 +105,7 @@ let () =
   if selected_hand = [] then print_endline "No cards selected."
   else
     try
-      let score = Score.score_played_cards selected_hand in
+      let score = Score.score_played_cards selected_hand !jokers in
       let hand_type =
         Hand.highest_hand selected_hand |> fst |> Hand.played_hand_type
       in
