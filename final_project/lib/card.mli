@@ -3,13 +3,9 @@ type t
     have a suit which is one of Spades, Hearts, Diamonds, or Clubs. The rank of
     the card will range from 2–10, Jack, Queen, King, or Ace. *)
 
-type suit =
-  | Spades
-  | Hearts
-  | Diamonds
-  | Clubs
-      (** [suit] represents the suit of the card, of which could be Spades,
-          Hearts, Diamonds, or Clubs. *)
+(* type suit = | Spades | Hearts | Diamonds | Clubs *)
+(* [suit] represents the suit of the card, of which could be Spades, Hearts,
+   Diamonds, or Clubs. *)
 
 exception BadCard
 (** [BadCard] is raised when a card is not a part of a standard deck. *)
