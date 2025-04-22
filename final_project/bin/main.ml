@@ -1,13 +1,20 @@
-module Card = Final_project.Card
-module Hand = Final_project.Hand
-module Score = Final_project.Scoring
-module Deck = Final_project.Deck
-module Joker = Final_project.Joker
-module Shop = Final_project.Shop
+open Final_project
+(* module Card = Final_project.Card module Hand = Final_project.Hand module
+   Score = Final_project.Scoring module Deck = Final_project.Deck module Joker =
+   Final_project.Joker module Shop = Final_project.Shop *)
 
 let money = ref 50
 let deck = ref (Deck.init ())
-let jokers = ref [|Joker.Scholar; Joker.OddTodd; Joker.EvenSteven; Joker.Bloodstone; Joker.Triboulet|]
+
+let jokers =
+  ref
+    [|
+      Joker.of_string "Scholar";
+      Joker.of_string "OddTodd";
+      Joker.of_string "EvenSteven";
+      Joker.of_string "Bloodstone";
+      Joker.of_string "Triboulet";
+    |]
 
 let card_list_printer cards =
   if List.length cards = 0 then "None"
@@ -105,13 +112,13 @@ let () =
   if selected_hand = [] then print_endline "No cards selected."
   else
     try
-      let score = Score.score_played_cards selected_hand !jokers in
+      let score = Scoring.score_played_cards selected_hand !jokers in
       let hand_type =
         Hand.highest_hand selected_hand |> fst |> Hand.played_hand_type
       in
       Printf.printf "The score for your selected hand is: %d\n" score;
       Printf.printf "The type of hand is: %s\n" hand_type;
-      (** Opens the shop allowing you to buy stuff. *)
+      (* Opens the shop allowing you to buy stuff. *)
       Shop.open_shop money deck jokers
     with
     | Failure msg -> Printf.printf "Scoring failed: %s\n" msg

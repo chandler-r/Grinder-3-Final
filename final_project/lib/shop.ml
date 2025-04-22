@@ -26,7 +26,7 @@ let process_purchases (purchase : t) (deck : Deck.t ref)
   | Planet_card_purchase purchase -> process_planet_card purchase
 
 let dummy_card_purchase () = Card.of_pair ("spades", 4)
-let dummy_joker_purchase () = Joker.Scholar
+let dummy_joker_purchase () = Joker.of_string "Scholar"
 let dummy_planet_purchase () = Hand.create_hands "high card"
 
 let open_shop (money : int ref) (deck : Deck.t ref) (jokers : Joker.t array ref)

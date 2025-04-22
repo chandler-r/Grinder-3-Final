@@ -1,6 +1,12 @@
 let () = Random.self_init ()
 
-type t =
+type rarity =
+  | Common
+  | Uncommon
+  | Rare
+  | Legendary
+
+type kind =
   | Joker (* +4 Mult *)
   | GreedyJoker (* Played cards with Diamond suit give +3 Mult when scored *)
   | LustyJoker (* Played cards with Heart suit give +3 Mult when scored *)
@@ -37,11 +43,13 @@ type t =
       (** The type of a joker. Effects taken from
           https://balatrogame.fandom.com/wiki/Jokers. *)
 
+type t = kind * rarity
+
 let joker_limit = ref 5
 
 exception TooManyJokers
 
-let joker_to_string = function
+let kind_to_string = function
   | Joker -> "Joker"
   | GreedyJoker -> "Greedy Joker"
   | LustyJoker -> "Lusty Joker"
@@ -72,6 +80,14 @@ let joker_to_string = function
   | TheTribe -> "The Tribe"
   | Triboulet -> "Triboulet"
 
+let rarity_to_string = function
+  | Common -> "Common"
+  | Uncommon -> "Uncommon"
+  | Rare -> "Rare"
+  | Legendary -> "Legendary"
+
+let to_string (j, r) = kind_to_string j ^ " (" ^ rarity_to_string r ^ ")"
+
 let add_joker joker_arr joker =
   if Array.length joker_arr >= !joker_limit then raise TooManyJokers
   else Array.append joker_arr [| joker |]
@@ -87,47 +103,47 @@ let apply_scoring_jokers_to_card_helper (card : Card.t)
   let mult = ref (snd chips_and_mult) in
   let joker_applied = ref true in
   (match joker with
-  | GreedyJoker ->
+  | GreedyJoker, _ ->
       if suit = "♦️" then mult := !mult +. 3. else joker_applied := false
-  | LustyJoker ->
+  | LustyJoker, _ ->
       if suit = "❤️" then mult := !mult +. 3. else joker_applied := false
-  | WrathfulJoker ->
+  | WrathfulJoker, _ ->
       if suit = "♠️" then mult := !mult +. 3. else joker_applied := false
-  | GluttonousJoker ->
+  | GluttonousJoker, _ ->
       if suit = "♣️" then mult := !mult +. 3. else joker_applied := false
-  | Fibonacci -> (
+  | Fibonacci, _ -> (
       match rank with
       | 14 | 2 | 3 | 5 | 8 -> mult := !mult +. 8.
       | _ -> joker_applied := false)
-  | EvenSteven -> (
+  | EvenSteven, _ -> (
       match rank with
       | 2 | 4 | 6 | 8 | 10 -> mult := !mult +. 4.
       | _ -> joker_applied := false)
-  | OddTodd -> (
+  | OddTodd, _ -> (
       match rank with
       | 14 | 3 | 5 | 7 | 9 -> chips := !chips + 31
       | _ -> joker_applied := false)
-  | Scholar -> (
+  | Scholar, _ -> (
       match rank with
       | 14 ->
           chips := !chips + 20;
           mult := !mult +. 4.
       | _ -> joker_applied := false)
-  | Bloodstone ->
+  | Bloodstone, _ ->
       if suit = "❤️" && roll_probability_half () = 2 then mult := !mult *. 1.5
       else joker_applied := false
-  | Arrowhead ->
+  | Arrowhead, _ ->
       if suit = "♠️" then chips := !chips + 50 else joker_applied := false
-  | OnyxAgate ->
+  | OnyxAgate, _ ->
       if suit = "♣️" then mult := !mult +. 7. else joker_applied := false
-  | Triboulet -> (
+  | Triboulet, _ -> (
       match rank with
       | 12 | 13 -> mult := !mult *. 2.
       | _ -> joker_applied := false)
   | _ -> joker_applied := false);
   if !joker_applied then
     print_endline
-      ("Applied " ^ joker_to_string joker ^ ": " ^ string_of_int !chips ^ " x "
+      ("Applied " ^ to_string joker ^ ": " ^ string_of_int !chips ^ " x "
      ^ string_of_float !mult);
   (!chips, !mult)
 
@@ -135,3 +151,44 @@ let apply_scoring_jokers_to_card joker_arr card chips mult =
   Array.fold_left
     (apply_scoring_jokers_to_card_helper card)
     (chips, mult) joker_arr
+
+let kind_of_string = function
+  | "Joker" -> Joker
+  | "GreedyJoker" -> GreedyJoker
+  | "LustyJoker" -> LustyJoker
+  | "WrathfulJoker" -> WrathfulJoker
+  | "GluttonousJoker" -> GluttonousJoker
+  | "JollyJoker" -> JollyJoker
+  | "ZanyJoker" -> ZanyJoker
+  | "MadJoker" -> MadJoker
+  | "CrazyJoker" -> CrazyJoker
+  | "DrollJoker" -> DrollJoker
+  | "SlyJoker" -> SlyJoker
+  | "WilyJoker" -> WilyJoker
+  | "CleverJoker" -> CleverJoker
+  | "DeviousJoker" -> DeviousJoker
+  | "CraftyJoker" -> CraftyJoker
+  | "HalfJoker" -> HalfJoker
+  | "Fibonacci" -> Fibonacci
+  | "EvenSteven" -> EvenSteven
+  | "OddTodd" -> OddTodd
+  | "Scholar" -> Scholar
+  | "Bloodstone" -> Bloodstone
+  | "Arrowhead" -> Arrowhead
+  | "OnyxAgate" -> OnyxAgate
+  | "TheDuo" -> TheDuo
+  | "TheTrio" -> TheTrio
+  | "TheFamily" -> TheFamily
+  | "TheOrder" -> TheOrder
+  | "TheTribe" -> TheTribe
+  | "Triboulet" -> Triboulet
+  | _ -> failwith "Not a kind of joker"
+
+let rarity_of_string = function
+  | "Common" -> Common
+  | "Uncommon" -> Uncommon
+  | "Rare" -> Rare
+  | "Legendary" -> Legendary
+  | _ -> failwith "Not a kind of rarity"
+
+let of_string str = (kind_of_string str, Common)
