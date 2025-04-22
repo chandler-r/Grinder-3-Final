@@ -9,11 +9,11 @@ let deck = ref (Deck.init ())
 let jokers =
   ref
     [|
-      Joker.of_string "Scholar";
+      Joker.of_string "Misprint";
       Joker.of_string "OddTodd";
       Joker.of_string "EvenSteven";
       Joker.of_string "Bloodstone";
-      Joker.of_string "Triboulet";
+      Joker.of_string "TheDuo";
     |]
 
 let card_list_printer cards =

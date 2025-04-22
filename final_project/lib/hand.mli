@@ -29,14 +29,24 @@ val hands_per_round : int ref
 
 val played_hand_type : hands -> string
 (** [played_hand_type hand] is a string representing the type of hand [hand].
-    The hand type priority is as follows: straight flush > four of a kind > full
-    house > flush > straight > three of a kind > two pair > pair > high card *)
+    The hand type priority is as follows: flush five > flush house > five of a
+    kind > straight flush > four of a kind > full house > flush > straight >
+    three of a kind > two pair > pair > high card *)
 
 val highest_hand : Card.t list -> hands * Card.t list
 (** [highest_hand played] is the highest priority hand type possible from a
     given set of played cards, along with the cards that will be used for
     scoring. [played] must contain at least one element and no more than 5
     elements.*)
+
+val contained_hands : Card.t list -> string list
+(** [contained_hands played] is a list of all the hand types, represented as
+    strings (according to played_hand_type), contained in a given set of played
+    cards. For example, a hand with 3 Aces and 2 Kings, all with the heart suit,
+    contains a pair, a two-pair, a three-of-a-kind, a full house, a flush, and a
+    flush house. All hands technically contain a high card, but this is excluded
+    unless the hand only contains a high card. [played] must contain at least
+    one element and no more than 5 elements.*)
 
 val discard : t -> t -> Deck.t -> t
 (** [discard cards hand] discards a subset of cards in a hand. Should check that

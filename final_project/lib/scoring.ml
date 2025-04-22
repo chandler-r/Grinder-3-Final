@@ -145,10 +145,13 @@ let score_played_cards played jokers =
     let base_mult = Hashtbl.find hand_base_mult_values scored_hand_type in
     print_endline
       ("Base : " ^ string_of_int base_chips ^ " x " ^ string_of_float base_mult);
-    let total_chips, total_mult =
+    let curr_chips, curr_mult =
       List.fold_left
         (calculate_card_contribution_acc jokers)
         (base_chips, base_mult) scored_hand_cards
+    in
+    let total_chips, total_mult =
+      Joker.apply_scoring_jokers_to_hand jokers played curr_chips curr_mult
     in
     let result =
       float_of_int total_chips *. total_mult |> ceil |> int_of_float

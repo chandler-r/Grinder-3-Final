@@ -8,6 +8,7 @@ type rarity =
 
 type kind =
   | Joker (* +4 Mult *)
+  | Misprint (* +0 - +23 Mult *)
   | GreedyJoker (* Played cards with Diamond suit give +3 Mult when scored *)
   | LustyJoker (* Played cards with Heart suit give +3 Mult when scored *)
   | WrathfulJoker (* Played cards with Spade suit give +3 Mult when scored *)
@@ -51,6 +52,7 @@ exception TooManyJokers
 
 let kind_to_string = function
   | Joker -> "Joker"
+  | Misprint -> "Misprint"
   | GreedyJoker -> "Greedy Joker"
   | LustyJoker -> "Lusty Joker"
   | WrathfulJoker -> "Wrathful Joker"
@@ -94,7 +96,22 @@ let add_joker joker_arr joker =
 
 (* Generate a random integer between 1 and 2. *)
 let roll_probability_half () = 1 + Random.int 2
+
+(* Generate a random integer between 0 and 23. *)
+let roll_mult_misprint () = Random.int 24
+
+let apply_hand_type_joker played_hand hand_type chips mult chips_bonus
+    mult_bonus mult_multiplier j_app =
+  if List.mem hand_type (Hand.contained_hands played_hand) then (
+    chips := !chips + chips_bonus;
+    if mult_multiplier > 1. then mult := !mult *. mult_multiplier
+    else mult := !mult +. mult_bonus)
+  else j_app := false
+
 let apply_basic mult j_app = mult := !mult +. 3.
+
+let apply_misprint mult j_app =
+  mult := !mult +. float_of_int (roll_mult_misprint ())
 
 let apply_greedy suit mult j_app =
   if suit = "♦️" then mult := !mult +. 3. else j_app := false
@@ -108,17 +125,40 @@ let apply_wrathful suit mult j_app =
 let apply_gluttonous suit mult j_app =
   if suit = "♣️" then mult := !mult +. 3. else j_app := false
 
-let apply_jolly (suit1, suit2) rank mult j_app = failwith "unimplemented"
-let apply_zany j_app = failwith "unimplemented"
-let apply_mad j_app = failwith "unimplemented"
-let apply_crazy j_app = failwith "unimplemented"
-let apply_droll j_app = failwith "unimplemented"
-let apply_sly j_app = failwith "unimplemented"
-let apply_wily j_app = failwith "unimplemented"
-let apply_clever j_app = failwith "unimplemented"
-let apply_devious j_app = failwith "unimplemented"
-let apply_crafty j_app = failwith "unimplemented"
-let apply_half j_app = failwith "unimplemented"
+let apply_jolly played_hand chips mult j_app =
+  apply_hand_type_joker played_hand "pair" chips mult 0 8. 0. j_app
+
+let apply_zany played_hand chips mult j_app =
+  apply_hand_type_joker played_hand "three of a kind" chips mult 0 12. 0. j_app
+
+let apply_mad played_hand chips mult j_app =
+  apply_hand_type_joker played_hand "two pair" chips mult 0 10. 0. j_app
+
+let apply_crazy played_hand chips mult j_app =
+  apply_hand_type_joker played_hand "straight" chips mult 0 12. 0. j_app
+
+let apply_droll played_hand chips mult j_app =
+  apply_hand_type_joker played_hand "flush" chips mult 0 10. 0. j_app
+
+let apply_sly played_hand chips mult j_app =
+  apply_hand_type_joker played_hand "pair" chips mult 50 0. 0. j_app
+
+let apply_wily played_hand chips mult j_app =
+  apply_hand_type_joker played_hand "three of a kind" chips mult 80 0. 0. j_app
+
+let apply_clever played_hand chips mult j_app =
+  apply_hand_type_joker played_hand "two pair" chips mult 80 0. 0. j_app
+
+let apply_devious played_hand chips mult j_app =
+  apply_hand_type_joker played_hand "straight" chips mult 100 0. 0. j_app
+
+let apply_crafty played_hand chips mult j_app =
+  apply_hand_type_joker played_hand "flush" chips mult 80 0. 0. j_app
+
+let apply_half played_hand mult j_app =
+  if Hand.highest_hand played_hand |> snd |> List.length <= 3 then
+    mult := !mult +. 20.
+  else j_app := false
 
 let apply_fib rank mult j_app =
   match rank with
@@ -152,35 +192,33 @@ let apply_arrow suit chips j_app =
 let apply_onyx suit mult j_app =
   if suit = "♣️" then mult := !mult +. 7. else j_app := false
 
-let apply_duo j_app = failwith "unimplemented"
-let apply_trio j_app = failwith "unimplemented"
-let apply_family j_app = failwith "unimplemented"
-let apply_order j_app = failwith "unimplemented"
-let apply_tribe j_app = failwith "unimplemented"
+let apply_duo played_hand chips mult j_app =
+  apply_hand_type_joker played_hand "pair" chips mult 0 0. 2. j_app
+
+let apply_trio played_hand chips mult j_app =
+  apply_hand_type_joker played_hand "three of a kind" chips mult 0 0. 3. j_app
+
+let apply_family played_hand chips mult j_app =
+  apply_hand_type_joker played_hand "four of a kind" chips mult 0 0. 4. j_app
+
+let apply_order played_hand chips mult j_app =
+  apply_hand_type_joker played_hand "straight" chips mult 0 0. 3. j_app
+
+let apply_tribe played_hand chips mult j_app =
+  apply_hand_type_joker played_hand "flush" chips mult 0 0. 2. j_app
 
 let apply_triboulet rank mult j_app =
   match rank with
   | 12 | 13 -> mult := !mult *. 2.
   | _ -> j_app := false
 
-let apply_single_joker joker suit rank chips mult j_app =
+let apply_single_joker_to_card joker suit rank chips mult j_app =
+  (* Effects when scoring card *)
   match joker with
-  | Joker, _ -> apply_basic mult j_app
   | GreedyJoker, _ -> apply_greedy suit mult j_app
   | LustyJoker, _ -> apply_lusty suit mult j_app
   | WrathfulJoker, _ -> apply_wrathful suit mult j_app
   | GluttonousJoker, _ -> apply_gluttonous suit mult j_app
-  | JollyJoker, _ -> apply_jolly (suit, suit) rank mult j_app
-  | ZanyJoker, _ -> apply_zany j_app
-  | MadJoker, _ -> apply_mad j_app
-  | CrazyJoker, _ -> apply_crazy j_app
-  | DrollJoker, _ -> apply_droll j_app
-  | SlyJoker, _ -> apply_sly j_app
-  | WilyJoker, _ -> apply_wily j_app
-  | CleverJoker, _ -> apply_clever j_app
-  | DeviousJoker, _ -> apply_devious j_app
-  | CraftyJoker, _ -> apply_crafty j_app
-  | HalfJoker, _ -> apply_half j_app
   | Fibonacci, _ -> apply_fib rank mult j_app
   | EvenSteven, _ -> apply_even rank mult j_app
   | OddTodd, _ -> apply_odd rank chips j_app
@@ -188,20 +226,51 @@ let apply_single_joker joker suit rank chips mult j_app =
   | Bloodstone, _ -> apply_blood suit mult j_app
   | Arrowhead, _ -> apply_arrow suit chips j_app
   | OnyxAgate, _ -> apply_onyx suit mult j_app
-  | TheDuo, _ -> apply_duo j_app
-  | TheTrio, _ -> apply_trio j_app
-  | TheFamily, _ -> apply_family j_app
-  | TheOrder, _ -> apply_order j_app
-  | TheTribe, _ -> apply_tribe j_app
   | Triboulet, _ -> apply_triboulet rank mult j_app
+  | _ -> j_app := false
+
+let apply_single_joker_to_hand joker played_hand chips mult j_app =
+  (* End of hand effects *)
+  match joker with
+  | Joker, _ -> apply_basic mult j_app
+  | Misprint, _ -> apply_misprint mult j_app
+  | JollyJoker, _ -> apply_jolly played_hand chips mult j_app
+  | ZanyJoker, _ -> apply_zany played_hand chips mult j_app
+  | MadJoker, _ -> apply_mad played_hand chips mult j_app
+  | CrazyJoker, _ -> apply_crazy played_hand chips mult j_app
+  | DrollJoker, _ -> apply_droll played_hand chips mult j_app
+  | SlyJoker, _ -> apply_sly played_hand chips mult j_app
+  | WilyJoker, _ -> apply_wily played_hand chips mult j_app
+  | CleverJoker, _ -> apply_clever played_hand chips mult j_app
+  | DeviousJoker, _ -> apply_devious played_hand chips mult j_app
+  | CraftyJoker, _ -> apply_crafty played_hand chips mult j_app
+  | HalfJoker, _ -> apply_half played_hand mult j_app
+  | TheDuo, _ -> apply_duo played_hand chips mult j_app
+  | TheTrio, _ -> apply_trio played_hand chips mult j_app
+  | TheFamily, _ -> apply_family played_hand chips mult j_app
+  | TheOrder, _ -> apply_order played_hand chips mult j_app
+  | TheTribe, _ -> apply_tribe played_hand chips mult j_app
+  | _ -> j_app := false
 
 let apply_scoring_jokers_to_card_helper (card : Card.t)
     (chips_and_mult : int * float) (joker : t) =
   let chips = ref (fst chips_and_mult) in
   let mult = ref (snd chips_and_mult) in
   let joker_applied = ref true in
-  apply_single_joker joker (Card.suit card) (Card.number card) chips mult
-    joker_applied;
+  apply_single_joker_to_card joker (Card.suit card) (Card.number card) chips
+    mult joker_applied;
+  if !joker_applied then
+    print_endline
+      ("Applied " ^ to_string joker ^ ": " ^ string_of_int !chips ^ " x "
+     ^ string_of_float !mult);
+  (!chips, !mult)
+
+let apply_scoring_jokers_to_hand_helper (played : Card.t list)
+    (chips_and_mult : int * float) (joker : t) =
+  let chips = ref (fst chips_and_mult) in
+  let mult = ref (snd chips_and_mult) in
+  let joker_applied = ref true in
+  apply_single_joker_to_hand joker played chips mult joker_applied;
   if !joker_applied then
     print_endline
       ("Applied " ^ to_string joker ^ ": " ^ string_of_int !chips ^ " x "
@@ -213,8 +282,14 @@ let apply_scoring_jokers_to_card joker_arr card chips mult =
     (apply_scoring_jokers_to_card_helper card)
     (chips, mult) joker_arr
 
+let apply_scoring_jokers_to_hand joker_arr hand chips mult =
+  Array.fold_left
+    (apply_scoring_jokers_to_hand_helper hand)
+    (chips, mult) joker_arr
+
 let kind_of_string = function
   | "Joker" -> Joker
+  | "Misprint" -> Misprint
   | "GreedyJoker" -> GreedyJoker
   | "LustyJoker" -> LustyJoker
   | "WrathfulJoker" -> WrathfulJoker
@@ -253,4 +328,6 @@ let rarity_of_string = function
   | _ -> failwith "Not a kind of rarity"
 
 let of_string str = (kind_of_string str, Common)
+
+(* All jokers are common for now *)
 let rarity (k, r) = rarity_to_string r
