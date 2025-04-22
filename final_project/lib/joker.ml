@@ -192,3 +192,4 @@ let rarity_of_string = function
   | _ -> failwith "Not a kind of rarity"
 
 let of_string str = (kind_of_string str, Common)
+let rarity (k, r) = rarity_to_string r

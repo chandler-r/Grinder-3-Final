@@ -27,7 +27,18 @@ val apply_scoring_jokers_to_card :
     new chips and mult values. *)
 
 val of_string : string -> t
-(** [joker_of_string_pair s] is a joker of kind [s]. *)
+(** [joker_of_string_pair s] is a joker of kind [s]. NOTE: In current
+    implementation, [s] must be one of
+    [["Joker"; "GreedyJoker"; "LustyJoker"; "WrathfulJoker"; "GluttonousJoker";
+     "JollyJoker"; "ZanyJoker"; "MadJoker"; "CrazyJoker"; "DrollJoker";
+     "SlyJoker"; "WilyJoker"; "CleverJoker"; "DeviousJoker"; "CraftyJoker";
+     "HalfJoker"; "Fibonacci"; "EvenSteven"; "OddTodd"; "Scholar"; "Bloodstone";
+     "Arrowhead"; "OnyxAgate"; "TheDuo"; "TheTrio"; "TheFamily"; "TheOrder";
+     "TheTribe"; "Triboulet"]]*)
+
+val rarity : t -> string
+(** [rarity joker] is one of ["Common"], ["Uncommon"], ["Rare"], and
+    ["Legendary"]. *)
 
 (* stuff from before:  *)
 (* type joker = | Joker (* +4 Mult *) | GreedyJoker (* Played cards with Diamond
