@@ -1,6 +1,9 @@
 type t = Card.t list
-(* AF: [card1; card2; ...; cardn] is a representation of a collection of cards, either held in hand or a subset of those to be played or discarded. *)
-(* RI: the length of the list representing a hand should be no more than hand_size. The length of the list representing cards played or discarded should be no more than play_limit *)
+(* AF: [card1; card2; ...; cardn] is a representation of a collection of cards,
+    either held in hand or a subset of those to be played or discarded. *)
+(* RI: the length of the list representing a hand should be no more than
+   hand_size. The length of the list representing cards played or discarded
+   should be no more than play_limit *)
 
 type hands =
   | HighCard
