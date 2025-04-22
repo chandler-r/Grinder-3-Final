@@ -11,10 +11,21 @@ type blind =
    larger binds. [Small] < [Big] < [Boss]. *)
 (* RI: None *)
 
-type level = ante * blind
+type level = (ante * blind) ref
 (* AF: [(a, b)] represents blind [b] of ante [a]. *)
 
-let target_score (a, b) =
+exception GameOver
+
+let start_level () = ref (1, Small)
+
+let incr_level level =
+  match !level with
+  | a, Small -> level := (a, Big)
+  | a, Big -> level := (a, Boss)
+  | a, Boss -> if a < 8 then level := (a + 1, Small) else raise GameOver
+
+let target_score level =
+  let a, b = !level in
   let m =
     match b with
     | Small -> 1.
@@ -37,16 +48,16 @@ let target_score (a, b) =
 
   int_of_float (m *. v)
 
-let end_of_round_bonus (_, b) =
-  match b with
-  | Small -> 3
-  | Big -> 4
-  | Boss -> 5
+let end_of_round_bonus level =
+  match !level with
+  | _, Small -> 3
+  | _, Big -> 4
+  | _, Boss -> 5
 
-let ante (a, _) = a
+let ante level = fst !level
 
-let blind (_, b) =
-  match b with
-  | Small -> "Small"
-  | Big -> "Big"
-  | Boss -> "Boss"
+let blind level =
+  match !level with
+  | _, Small -> "Small"
+  | _, Big -> "Big"
+  | _, Boss -> "Boss"

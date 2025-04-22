@@ -1,5 +1,10 @@
 type level
 
+exception GameOver
+
+val start_level : unit -> level
+val incr_level : level -> unit
+
 val target_score : level -> int
 (** [target_score l] is the user's target score to beat a specific level [l]. *)
 
