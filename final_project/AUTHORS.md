@@ -14,3 +14,6 @@ Sources:
 
 2. https://efhiii.github.io/balatro-calculator/?h=AACgAJGAoEQIACA
 (test_final_project.ml line 201)
+
+3. https://balatrogame.fandom.com/wiki
+(used for a lot of game logic in various files (e.g., joker))
