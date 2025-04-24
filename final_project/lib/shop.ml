@@ -33,7 +33,7 @@ let open_shop (money : int ref) (deck : Deck.t ref) (jokers : Joker.t array ref)
     : unit =
   let shopping = ref true in
   let purchases = ref [] in
-  Unix.sleep 2;
+  Unix.sleep 1;
   while !shopping do
     print_endline
       "\n==================== WELCOME TO THE SHOP ====================";

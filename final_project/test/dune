@@ -1,3 +1,4 @@
 (test
  (name test_final_project)
- (libraries ounit2 final_project qcheck))
+ (libraries ounit2 final_project qcheck)
+ (preprocess (pps bisect_ppx)))

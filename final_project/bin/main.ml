@@ -5,16 +5,15 @@ open Final_project
 
 let money = ref 50
 let deck = ref (Deck.init ())
+let small_blind = ref 300
+let big_blind = ref 600
+let boss_blind = ref 900
 
-let jokers =
-  ref
-    [|
-      Joker.of_string "Misprint";
-      Joker.of_string "OddTodd";
-      Joker.of_string "EvenSteven";
-      Joker.of_string "Bloodstone";
-      Joker.of_string "TheDuo";
-    |]
+(* let jokers = ref [| Joker.of_string "Misprint"; Joker.of_string "OddTodd";
+   Joker.of_string "EvenSteven"; Joker.of_string "Bloodstone"; Joker.of_string
+   "TheDuo"; |] *)
+
+let jokers = ref [||]
 
 let card_list_printer cards =
   if List.length cards = 0 then "None"
@@ -75,7 +74,11 @@ let rec get_user_selection cards =
       |> List.map (fun x -> x - 1)
     in
     if List.length indices > 5 then (
-      print_endline "You can only select up to 5 cards. Try again.\n";
+      print_endline "\nYou can only select up to 5 cards. Try again.\n";
+      get_user_selection cards)
+    else if List.length indices <> List.length (List.sort_uniq compare indices)
+    then (
+      print_endline "\nDuplicate indicies detected. Please try again.\n";
       get_user_selection cards)
     else
       let selected_cards = List.map (List.nth cards) indices in
@@ -99,27 +102,52 @@ let test_hand =
     Card.of_pair ("Spades", 10);
   ]
 
-let () =
-  let deck_copy = Deck.copy_deck !deck in
-  (* Choose how many cards are drawn. When running the game loop we should reset
-     deck_copy every round and only modify the global deck variable when adding
-     or removing stuff. *)
-  let cards = Deck.draw_cards deck_copy 7 in
-  let selected_hand = get_user_selection cards in
-  print_endline "You selected the following card:\n";
-  print_endline (card_list_printer selected_hand);
-
-  if selected_hand = [] then print_endline "No cards selected."
+let rec game_loop () =
+  if !money <= 0 then (
+    print_endline "You have run out of money. Game over!";
+    exit 0)
   else
-    try
-      let score = Scoring.score_played_cards selected_hand !jokers in
-      let hand_type =
-        Hand.highest_hand selected_hand |> fst |> Hand.played_hand_type
-      in
-      Printf.printf "The score for your selected hand is: %d\n" score;
-      Printf.printf "The type of hand is: %s\n" hand_type;
-      (* Opens the shop allowing you to buy stuff. *)
-      Shop.open_shop money deck jokers
-    with
-    | Failure msg -> Printf.printf "Scoring failed: %s\n" msg
-    | _ -> print_endline "Unknown error has occured."
+    let blind_threshold = Blind.choose_blind () in
+    print_endline
+      "You must meet or exceed the following score to beat this blind";
+    Printf.printf "Blind Threshold: %d\n" blind_threshold;
+    (* let deck_copy = Deck.copy_deck !deck in (* Choose how many cards are
+       drawn. When running the game loop we should reset deck_copy every round
+       and only modify the global deck variable when adding or removing stuff.
+       *) let cards = Deck.draw_cards deck_copy 7 in *)
+    let cards = test_hand in
+
+    print_endline "Here is your hand:";
+    let selected_hand = get_user_selection cards in
+    print_endline "You selected the following card:\n";
+    print_endline (card_list_printer selected_hand);
+
+    if selected_hand = [] then print_endline "No cards selected."
+    else
+      try
+        let score = Scoring.score_played_cards selected_hand !jokers in
+        let hand_type =
+          Hand.highest_hand selected_hand |> fst |> Hand.played_hand_type
+        in
+        Printf.printf "The score for your selected hand is: %d\n" score;
+        Printf.printf "The type of hand is: %s\n" hand_type;
+
+        if score >= blind_threshold then (
+          print_endline
+            "\n\
+             You beat the blind, Enjoy your spoils and continue your journey\n";
+          money := !money + 1;
+          Printf.printf "You current money: %d\n" !money;
+          (* Opens the shop allowing you to buy stuff. *)
+          Shop.open_shop money deck jokers;
+          game_loop ())
+        else (
+          print_endline "You failed to meet the blind. YOU LOSE!";
+          exit 0)
+      with
+      | Failure msg -> Printf.printf "Scoring failed: %s\n" msg
+      | _ ->
+          print_endline "Unknown error has occured.";
+          print_endline "test"
+
+let () = game_loop ()
