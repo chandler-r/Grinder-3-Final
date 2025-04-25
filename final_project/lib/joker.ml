@@ -214,42 +214,42 @@ let apply_triboulet rank mult j_app =
 
 let apply_single_joker_to_card joker suit rank chips mult j_app =
   (* Effects when scoring card *)
-  match joker with
-  | GreedyJoker, _ -> apply_greedy suit mult j_app
-  | LustyJoker, _ -> apply_lusty suit mult j_app
-  | WrathfulJoker, _ -> apply_wrathful suit mult j_app
-  | GluttonousJoker, _ -> apply_gluttonous suit mult j_app
-  | Fibonacci, _ -> apply_fib rank mult j_app
-  | EvenSteven, _ -> apply_even rank mult j_app
-  | OddTodd, _ -> apply_odd rank chips j_app
-  | Scholar, _ -> apply_scholar rank chips mult j_app
-  | Bloodstone, _ -> apply_blood suit mult j_app
-  | Arrowhead, _ -> apply_arrow suit chips j_app
-  | OnyxAgate, _ -> apply_onyx suit mult j_app
-  | Triboulet, _ -> apply_triboulet rank mult j_app
+  match fst joker with
+  | GreedyJoker -> apply_greedy suit mult j_app
+  | LustyJoker -> apply_lusty suit mult j_app
+  | WrathfulJoker -> apply_wrathful suit mult j_app
+  | GluttonousJoker -> apply_gluttonous suit mult j_app
+  | Fibonacci -> apply_fib rank mult j_app
+  | EvenSteven -> apply_even rank mult j_app
+  | OddTodd -> apply_odd rank chips j_app
+  | Scholar -> apply_scholar rank chips mult j_app
+  | Bloodstone -> apply_blood suit mult j_app
+  | Arrowhead -> apply_arrow suit chips j_app
+  | OnyxAgate -> apply_onyx suit mult j_app
+  | Triboulet -> apply_triboulet rank mult j_app
   | _ -> j_app := false
 
 let apply_single_joker_to_hand joker played_hand chips mult j_app =
   (* End of hand effects *)
-  match joker with
-  | Joker, _ -> apply_basic mult j_app
-  | Misprint, _ -> apply_misprint mult j_app
-  | JollyJoker, _ -> apply_jolly played_hand chips mult j_app
-  | ZanyJoker, _ -> apply_zany played_hand chips mult j_app
-  | MadJoker, _ -> apply_mad played_hand chips mult j_app
-  | CrazyJoker, _ -> apply_crazy played_hand chips mult j_app
-  | DrollJoker, _ -> apply_droll played_hand chips mult j_app
-  | SlyJoker, _ -> apply_sly played_hand chips mult j_app
-  | WilyJoker, _ -> apply_wily played_hand chips mult j_app
-  | CleverJoker, _ -> apply_clever played_hand chips mult j_app
-  | DeviousJoker, _ -> apply_devious played_hand chips mult j_app
-  | CraftyJoker, _ -> apply_crafty played_hand chips mult j_app
-  | HalfJoker, _ -> apply_half played_hand mult j_app
-  | TheDuo, _ -> apply_duo played_hand chips mult j_app
-  | TheTrio, _ -> apply_trio played_hand chips mult j_app
-  | TheFamily, _ -> apply_family played_hand chips mult j_app
-  | TheOrder, _ -> apply_order played_hand chips mult j_app
-  | TheTribe, _ -> apply_tribe played_hand chips mult j_app
+  match fst joker with
+  | Joker -> apply_basic mult j_app
+  | Misprint -> apply_misprint mult j_app
+  | JollyJoker -> apply_jolly played_hand chips mult j_app
+  | ZanyJoker -> apply_zany played_hand chips mult j_app
+  | MadJoker -> apply_mad played_hand chips mult j_app
+  | CrazyJoker -> apply_crazy played_hand chips mult j_app
+  | DrollJoker -> apply_droll played_hand chips mult j_app
+  | SlyJoker -> apply_sly played_hand chips mult j_app
+  | WilyJoker -> apply_wily played_hand chips mult j_app
+  | CleverJoker -> apply_clever played_hand chips mult j_app
+  | DeviousJoker -> apply_devious played_hand chips mult j_app
+  | CraftyJoker -> apply_crafty played_hand chips mult j_app
+  | HalfJoker -> apply_half played_hand mult j_app
+  | TheDuo -> apply_duo played_hand chips mult j_app
+  | TheTrio -> apply_trio played_hand chips mult j_app
+  | TheFamily -> apply_family played_hand chips mult j_app
+  | TheOrder -> apply_order played_hand chips mult j_app
+  | TheTribe -> apply_tribe played_hand chips mult j_app
   | _ -> j_app := false
 
 let apply_scoring_jokers_to_card_helper (card : Card.t)
@@ -288,36 +288,36 @@ let apply_scoring_jokers_to_hand joker_arr hand chips mult =
     (chips, mult) joker_arr
 
 let kind_of_string = function
-  | "Joker" -> Joker
-  | "Misprint" -> Misprint
-  | "GreedyJoker" -> GreedyJoker
-  | "LustyJoker" -> LustyJoker
-  | "WrathfulJoker" -> WrathfulJoker
-  | "GluttonousJoker" -> GluttonousJoker
-  | "JollyJoker" -> JollyJoker
-  | "ZanyJoker" -> ZanyJoker
-  | "MadJoker" -> MadJoker
-  | "CrazyJoker" -> CrazyJoker
-  | "DrollJoker" -> DrollJoker
-  | "SlyJoker" -> SlyJoker
-  | "WilyJoker" -> WilyJoker
-  | "CleverJoker" -> CleverJoker
-  | "DeviousJoker" -> DeviousJoker
-  | "CraftyJoker" -> CraftyJoker
-  | "HalfJoker" -> HalfJoker
-  | "Fibonacci" -> Fibonacci
-  | "EvenSteven" -> EvenSteven
-  | "OddTodd" -> OddTodd
-  | "Scholar" -> Scholar
-  | "Bloodstone" -> Bloodstone
-  | "Arrowhead" -> Arrowhead
-  | "OnyxAgate" -> OnyxAgate
-  | "TheDuo" -> TheDuo
-  | "TheTrio" -> TheTrio
-  | "TheFamily" -> TheFamily
-  | "TheOrder" -> TheOrder
-  | "TheTribe" -> TheTribe
-  | "Triboulet" -> Triboulet
+  | "Joker" -> (Joker, Common)
+  | "Misprint" -> (Misprint, Common)
+  | "GreedyJoker" -> (GreedyJoker, Common)
+  | "LustyJoker" -> (LustyJoker, Common)
+  | "WrathfulJoker" -> (WrathfulJoker, Common)
+  | "GluttonousJoker" -> (GluttonousJoker, Common)
+  | "JollyJoker" -> (JollyJoker, Common)
+  | "ZanyJoker" -> (ZanyJoker, Common)
+  | "MadJoker" -> (MadJoker, Common)
+  | "CrazyJoker" -> (CrazyJoker, Common)
+  | "DrollJoker" -> (DrollJoker, Common)
+  | "SlyJoker" -> (SlyJoker, Common)
+  | "WilyJoker" -> (WilyJoker, Common)
+  | "CleverJoker" -> (CleverJoker, Common)
+  | "DeviousJoker" -> (DeviousJoker, Common)
+  | "CraftyJoker" -> (CraftyJoker, Common)
+  | "HalfJoker" -> (HalfJoker, Common)
+  | "Fibonacci" -> (Fibonacci, Uncommon)
+  | "EvenSteven" -> (EvenSteven, Common)
+  | "OddTodd" -> (OddTodd, Common)
+  | "Scholar" -> (Scholar, Common)
+  | "Bloodstone" -> (Bloodstone, Uncommon)
+  | "Arrowhead" -> (Arrowhead, Uncommon)
+  | "OnyxAgate" -> (OnyxAgate, Uncommon)
+  | "TheDuo" -> (TheDuo, Rare)
+  | "TheTrio" -> (TheTrio, Rare)
+  | "TheFamily" -> (TheFamily, Rare)
+  | "TheOrder" -> (TheOrder, Rare)
+  | "TheTribe" -> (TheTribe, Rare)
+  | "Triboulet" -> (Triboulet, Legendary)
   | _ -> failwith "Not a kind of joker"
 
 let rarity_of_string = function
@@ -327,7 +327,5 @@ let rarity_of_string = function
   | "Legendary" -> Legendary
   | _ -> failwith "Not a kind of rarity"
 
-let of_string str = (kind_of_string str, Common)
-
-(* All jokers are common for now *)
+let of_string str = kind_of_string str
 let rarity (k, r) = rarity_to_string r
