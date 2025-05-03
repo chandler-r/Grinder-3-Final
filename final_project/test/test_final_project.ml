@@ -39,10 +39,14 @@ let card_tests =
         (Invalid_argument
            "Suit must be one of \"Spades\", \"Hearts\", \"Diamonds\", or \
             \"Clubs\".") (fun _ -> Card.of_pair ("Spade", 5)) );
-    ( "simple card test raise bad number" >:: fun _ ->
+    ( "simple card test raise bad number (low)" >:: fun _ ->
       assert_raises
         (Invalid_argument "Rank must be between 1 and 14 (inclusive).")
         (fun _ -> Card.of_pair ("Spades", 0)) );
+    ( "simple card test raise bad number (high)" >:: fun _ ->
+      assert_raises
+        (Invalid_argument "Rank must be between 1 and 14 (inclusive).")
+        (fun _ -> Card.of_pair ("Spades", 15)) );
     ( "simple card test raise bad suit and bad number" >:: fun _ ->
       assert_raises
         (Invalid_argument "Rank must be between 1 and 14 (inclusive).")
@@ -221,6 +225,22 @@ let hand_tests =
         Card.of_pair ("Clubs", 4);
         Card.of_pair ("Clubs", 4);
       ];
+    create_hand_type_test "two pair"
+      [
+        Card.of_pair ("Diamonds", 13);
+        Card.of_pair ("Clubs", 13);
+        Card.of_pair ("Hearts", 11);
+        Card.of_pair ("Hearts", 11);
+        Card.of_pair ("Clubs", 9);
+      ];
+    create_hand_type_test "straight"
+      [
+        Card.of_pair ("Diamonds", 10);
+        Card.of_pair ("Clubs", 13);
+        Card.of_pair ("Hearts", 11);
+        Card.of_pair ("Hearts", 12);
+        Card.of_pair ("Clubs", 1);
+      ];
   ]
 
 let scoring_tests =
@@ -381,7 +401,31 @@ let scoring_tests =
       ];
   ]
 
+(* Deck tests *)
 let dummy_deck = Deck.init ()
+
+let add_card_check n =
+  let len = List.length (Deck.to_list (Deck.copy_deck dummy_deck)) in
+  if n > 0 && n <= 14 then
+    let deck = Deck.add_card dummy_deck (Card.of_pair ("Hearts", n)) in
+    List.length (Deck.to_list deck) = len + 1
+  else true
+
+let add_card_test =
+  QCheck.(Test.make ~count:10 ~name:"add card to deck" small_nat add_card_check)
+
+let remove_card_check n =
+  let len = List.length (Deck.to_list (Deck.copy_deck dummy_deck)) in
+  if n > 0 && n <= 14 then
+    let deck = Deck.remove_card dummy_deck (Card.of_pair ("Hearts", n)) in
+    List.length (Deck.to_list deck) = len - 1
+  else true
+
+let remove_card_test =
+  QCheck.(
+    Test.make ~count:10 ~name:"remove card from deck" small_nat
+      remove_card_check)
+
 let dummy_hand = Hand.to_hand (Deck.draw_cards dummy_deck 5)
 
 let rec pick_n n hand =
@@ -390,6 +434,7 @@ let rec pick_n n hand =
   | 0 -> []
   | _ -> List.nth card_list (n - 1) :: pick_n (n - 1) hand
 
+(* Hand (play/discard) tests *)
 let play_check num_cards =
   if num_cards > 5 || num_cards = 0 then true
   else
@@ -415,9 +460,11 @@ let discard_check num_cards =
 let discard_test =
   QCheck.(Test.make ~count:10 ~name:"discard" small_nat discard_check)
 
-let play_disc_tests =
-  List.map QCheck_runner.to_ounit2_test [ play_test; discard_test ]
+let play_disc_add_tests =
+  List.map QCheck_runner.to_ounit2_test
+    [ play_test; discard_test; add_card_test; remove_card_test ]
 
+(* Money tests *)
 let pay_check amount =
   Money.money := 4;
   if amount <= 4 then (
@@ -478,6 +525,6 @@ let tests =
          [
            card_tests; deck_tests; hand_tests; scoring_tests; end_of_round_tests;
          ]
-       @ play_disc_tests @ pay_tests
+       @ play_disc_add_tests @ pay_tests
 
 let _ = run_test_tt_main tests
