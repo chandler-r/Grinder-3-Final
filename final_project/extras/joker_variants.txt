@@ -1,4 +1,5 @@
 | Joker 
+| Misprint
 | GreedyJoker 
 | LustyJoker 
 | WrathfulJoker 

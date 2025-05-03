@@ -9,6 +9,14 @@ let card_list_printer cards =
       "" cards
     |> fun x -> "[" ^ String.sub x 0 (String.length x - 1) ^ " ]"
 
+let joker_list_printer jokers =
+  if Array.length jokers = 0 then "None"
+  else
+    Array.fold_left
+      (fun str joker -> str ^ " " ^ Joker.to_string joker ^ ";")
+      "" jokers
+    |> fun x -> "[" ^ String.sub x 0 (String.length x - 1) ^ " ]"
+
 let create_hand_type_test expected cards =
   "When playing the cards " ^ card_list_printer cards ^ ", the hand type "
   ^ expected ^ " is expected."
@@ -23,6 +31,14 @@ let create_basic_scoring_test expected cards =
   >:: fun _ ->
   assert_equal expected
     (Scoring.score_played_cards cards [||])
+    ~printer:string_of_int
+
+let create_joker_scoring_test expected cards jokers =
+  "Playing the cards " ^ card_list_printer cards ^ " with jokers "
+  ^ joker_list_printer jokers ^ " gives the score " ^ string_of_int expected
+  >:: fun _ ->
+  assert_equal expected
+    (Scoring.score_played_cards cards jokers)
     ~printer:string_of_int
 
 let card_tests =
@@ -80,6 +96,7 @@ let deck_tests =
   ]
 
 let hand_tests =
+  (* Note: ocamlformat separates each list element by line *)
   [
     create_hand_type_test "high card"
       [
@@ -243,10 +260,10 @@ let hand_tests =
       ];
   ]
 
-let scoring_tests =
+let basic_scoring_tests =
   [
     (* Used this website to calculate played hand scores:
-       https://efhiii.github.io/balatro-calculator/?h=AACgAJGAoEQIACA*)
+       https://efhiii.github.io/balatro-calculator/?h=AACgAJGAoEQIACA *)
     create_basic_scoring_test 16
       [
         Card.of_pair ("Clubs", 14);
@@ -401,6 +418,98 @@ let scoring_tests =
       ];
   ]
 
+let joker_scoring_tests =
+  [
+    (* Used this website to calculate played hand scores:
+       https://efhiii.github.io/balatro-calculator/?h=AACgAJGAoEQIACA *)
+    create_joker_scoring_test 1265
+      [
+        Card.of_pair ("Clubs", 14);
+        Card.of_pair ("Hearts", 2);
+        Card.of_pair ("Spades", 3);
+        Card.of_pair ("Hearts", 4);
+        Card.of_pair ("Diamonds", 5);
+      ]
+      [|
+        Joker.of_string "Joker";
+        Joker.of_string "GreedyJoker";
+        Joker.of_string "LustyJoker";
+        Joker.of_string "WrathfulJoker";
+        Joker.of_string "GluttonousJoker";
+      |];
+    create_joker_scoring_test 9159
+      [
+        Card.of_pair ("Clubs", 14);
+        Card.of_pair ("Hearts", 14);
+        Card.of_pair ("Spades", 14);
+      ]
+      [|
+        Joker.of_string "JollyJoker";
+        Joker.of_string "ZanyJoker";
+        Joker.of_string "WilyJoker";
+        Joker.of_string "SlyJoker";
+        Joker.of_string "HalfJoker";
+      |];
+    create_joker_scoring_test 18910
+      [
+        Card.of_pair ("Clubs", 14);
+        Card.of_pair ("Clubs", 2);
+        Card.of_pair ("Clubs", 3);
+        Card.of_pair ("Clubs", 4);
+        Card.of_pair ("Clubs", 5);
+      ]
+      [|
+        Joker.of_string "CrazyJoker";
+        Joker.of_string "DrollJoker";
+        Joker.of_string "DeviousJoker";
+        Joker.of_string "CraftyJoker";
+        Joker.of_string "Fibonacci";
+      |];
+    create_joker_scoring_test 4680
+      [
+        Card.of_pair ("Spades", 3);
+        Card.of_pair ("Hearts", 3);
+        Card.of_pair ("Clubs", 8);
+        Card.of_pair ("Diamonds", 8);
+        Card.of_pair ("Clubs", 5);
+      ]
+      [|
+        Joker.of_string "MadJoker";
+        Joker.of_string "CleverJoker";
+        Joker.of_string "EvenSteven";
+        Joker.of_string "OddTodd";
+        Joker.of_string "Arrowhead";
+      |];
+    create_joker_scoring_test 178524
+      [
+        Card.of_pair ("Clubs", 14);
+        Card.of_pair ("Clubs", 10);
+        Card.of_pair ("Clubs", 11);
+        Card.of_pair ("Clubs", 12);
+        Card.of_pair ("Clubs", 13);
+      ]
+      [|
+        Joker.of_string "Scholar";
+        Joker.of_string "OnyxAgate";
+        Joker.of_string "TheOrder";
+        Joker.of_string "TheTribe";
+        Joker.of_string "Triboulet";
+      |];
+    create_joker_scoring_test 80640
+      [
+        Card.of_pair ("Hearts", 10);
+        Card.of_pair ("Hearts", 10);
+        Card.of_pair ("Hearts", 10);
+        Card.of_pair ("Hearts", 10);
+        Card.of_pair ("Hearts", 10);
+      ]
+      [|
+        Joker.of_string "TheDuo";
+        Joker.of_string "TheTrio";
+        Joker.of_string "TheFamily";
+      |];
+  ]
+
 (* Deck tests *)
 let dummy_deck = Deck.init ()
 
@@ -523,7 +632,12 @@ let tests =
   "tests"
   >::: List.flatten
          [
-           card_tests; deck_tests; hand_tests; scoring_tests; end_of_round_tests;
+           card_tests;
+           deck_tests;
+           hand_tests;
+           basic_scoring_tests;
+           joker_scoring_tests;
+           end_of_round_tests;
          ]
        @ play_disc_add_tests @ pay_tests
 

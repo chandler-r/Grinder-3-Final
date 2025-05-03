@@ -108,7 +108,7 @@ let apply_hand_type_joker played_hand hand_type chips mult chips_bonus
     else mult := !mult +. mult_bonus)
   else j_app := false
 
-let apply_basic mult j_app = mult := !mult +. 3.
+let apply_basic mult j_app = mult := !mult +. 4.
 
 let apply_misprint mult j_app =
   mult := !mult +. float_of_int (roll_mult_misprint ())
@@ -144,7 +144,7 @@ let apply_sly played_hand chips mult j_app =
   apply_hand_type_joker played_hand "pair" chips mult 50 0. 0. j_app
 
 let apply_wily played_hand chips mult j_app =
-  apply_hand_type_joker played_hand "three of a kind" chips mult 80 0. 0. j_app
+  apply_hand_type_joker played_hand "three of a kind" chips mult 100 0. 0. j_app
 
 let apply_clever played_hand chips mult j_app =
   apply_hand_type_joker played_hand "two pair" chips mult 80 0. 0. j_app
