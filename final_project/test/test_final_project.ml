@@ -418,9 +418,66 @@ let discard_test =
 let play_disc_tests =
   List.map QCheck_runner.to_ounit2_test [ play_test; discard_test ]
 
+let pay_check amount =
+  Money.money := 4;
+  if amount <= 4 then (
+    Money.pay amount;
+    !Money.money = 4 - amount)
+  else true
+
+let pay_test = QCheck.(Test.make ~count:10 ~name:"pay" small_nat pay_check)
+
+let overdraw_check amount =
+  Money.money := 4;
+  if amount > 4 then
+    try
+      Money.pay amount;
+      false
+    with Money.InsufficientFunds -> true
+  else true
+
+let overdraw_test =
+  QCheck.(Test.make ~count:10 ~name:"overdraw" small_nat overdraw_check)
+
+let pay_tests =
+  List.map QCheck_runner.to_ounit2_test [ pay_test; overdraw_test ]
+
+let end_of_round_test (blind, starting_cash, expected_output) =
+  "Expected "
+  ^ string_of_int expected_output
+  ^ " for level " ^ string_of_int blind ^ " and starting cash "
+  ^ string_of_int starting_cash
+  >:: fun _ ->
+  Money.money := starting_cash;
+  let level = Level.start_level () in
+  if blind = 1 then Level.incr_level level
+  else if blind = 2 then (
+    Level.incr_level level;
+    Level.incr_level level)
+  else if blind = 3 then (
+    Level.incr_level level;
+    Level.incr_level level;
+    Level.incr_level level)
+  else ();
+  Money.end_of_round level 0;
+  assert_equal expected_output !Money.money ~printer:string_of_int
+
+let end_of_round_tests =
+  [
+    end_of_round_test (0, 5, 9);
+    end_of_round_test (0, 4, 7);
+    end_of_round_test (3, 4, 7);
+    end_of_round_test (1, 4, 8);
+    end_of_round_test (2, 4, 9);
+    end_of_round_test (0, 30, 38);
+  ]
+
 let tests =
   "tests"
-  >::: List.flatten [ card_tests; deck_tests; hand_tests; scoring_tests ]
-       @ play_disc_tests
+  >::: List.flatten
+         [
+           card_tests; deck_tests; hand_tests; scoring_tests; end_of_round_tests;
+         ]
+       @ play_disc_tests @ pay_tests
 
 let _ = run_test_tt_main tests
