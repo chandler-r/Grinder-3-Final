@@ -3,8 +3,12 @@ open Final_project
    Score = Final_project.Scoring module Deck = Final_project.Deck module Joker =
    Final_project.Joker module Shop = Final_project.Shop *)
 
+open ANSITerminal
+
 let money = ref 50
 let deck = ref (Deck.init ())
+
+let deck_length = ref (Array.length (Array.of_list (Deck.to_list !deck)))
 let small_blind = ref 300
 let big_blind = ref 600
 let boss_blind = ref 900
@@ -108,16 +112,20 @@ let rec game_loop () =
     exit 0)
   else
     let blind_threshold = Blind.choose_blind () in
-    print_endline
-      "You must meet or exceed the following score to beat this blind";
-    Printf.printf "Blind Threshold: %d\n" blind_threshold;
+    ANSITerminal.erase ANSITerminal.Screen;
+    Printf.printf
+      "\n\
+       You must meet or exceed the following score to beat this blind. \n\
+       Blind Threshold: %d\n"
+      blind_threshold;
+    Printf.printf "Test: %d/\n" !deck_length;
+    (* let running_length = !deck_length in *)
+
     (* let deck_copy = Deck.copy_deck !deck in (* Choose how many cards are
        drawn. When running the game loop we should reset deck_copy every round
        and only modify the global deck variable when adding or removing stuff.
        *) let cards = Deck.draw_cards deck_copy 7 in *)
     let cards = test_hand in
-
-    print_endline "Here is your hand:";
     let selected_hand = get_user_selection cards in
     print_endline "You selected the following card:\n";
     print_endline (card_list_printer selected_hand);
