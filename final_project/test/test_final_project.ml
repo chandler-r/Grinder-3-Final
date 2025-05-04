@@ -73,6 +73,81 @@ let card_tests =
         "Five of ♠️" ~printer:Fun.id );
   ]
 
+let planet_cards =
+  [
+    "Mercury";
+    "Venus";
+    "Earth";
+    "Mars";
+    "Jupiter";
+    "Saturn";
+    "Uranus";
+    "Neptune";
+    "Pluto";
+  ]
+
+let hands =
+  [
+    "pair";
+    "three of a kind";
+    "full house";
+    "four of a kind";
+    "flush";
+    "straight";
+    "two pair";
+    "straight flush";
+    "high card";
+    "five of a kind";
+    "flush house";
+    "flush five";
+  ]
+
+let planet_str_helper card =
+  card ^ " should have a planet card named after itself." >:: fun _ ->
+  assert_equal card (PlanetCard.to_string (PlanetCard.of_string card))
+
+let planet_card_str_tests = List.map planet_str_helper planet_cards
+
+let planet_effect_helper success card hand =
+  let mult, chips = (ref 2.5, ref 100) in
+  let () =
+    PlanetCard.use_planet_card
+      (PlanetCard.of_string card)
+      (Hand.create_hands hand) mult chips
+  in
+  let addM, addC =
+    if not success then (0., 0)
+    else
+      match card with
+      | "Mercury" -> (1., 15)
+      | "Venus" -> (2., 20)
+      | "Earth" -> (2., 25)
+      | "Mars" -> (3., 30)
+      | "Jupiter" -> (2., 15)
+      | "Saturn" -> (3., 30)
+      | "Uranus" -> (1., 20)
+      | "Neptune" -> (4., 40)
+      | "Pluto" -> (1., 10)
+      | _ ->
+          failwith
+            "Only Mercury through Pluto planet cards are supported currently."
+  in
+
+  "Planet card " ^ card ^ " with hand " ^ hand
+  ^ " will have correct effect on initial 2.5 mult and 100 chips."
+  >:: fun _ -> assert_equal (2.5 +. addM, 100 + addC) (!mult, !chips)
+
+let planet_card_effect_tests =
+  List.flatten
+    (List.mapi
+       (fun i c ->
+         List.mapi
+           (fun j h ->
+             if i = j then planet_effect_helper true c h
+             else planet_effect_helper false c h)
+           hands)
+       planet_cards)
+
 let deck_draw_helper n =
   let deck = Deck.init () in
   try
@@ -638,7 +713,10 @@ let tests =
            basic_scoring_tests;
            joker_scoring_tests;
            end_of_round_tests;
+           play_disc_add_tests;
+           pay_tests;
+           planet_card_str_tests;
+           planet_card_effect_tests;
          ]
-       @ play_disc_add_tests @ pay_tests
 
 let _ = run_test_tt_main tests
