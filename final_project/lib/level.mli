@@ -19,3 +19,6 @@ val ante : level -> int
 val blind : level -> string
 (** [blind l] is the current blind of level [l]. Necessarily one of ["Small"],
     ["Big"], or ["Boss"]. *)
+
+val to_string : level -> string
+(** string representation of the level. *)

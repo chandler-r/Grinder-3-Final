@@ -61,3 +61,6 @@ let blind level =
   | _, Small -> "Small"
   | _, Big -> "Big"
   | _, Boss -> "Boss"
+
+let to_string level =
+  "Level " ^ string_of_int (ante level) ^ ", " ^ blind level ^ " Blind"

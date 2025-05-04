@@ -104,9 +104,12 @@ let hands =
 
 let planet_str_helper card =
   card ^ " should have a planet card named after itself." >:: fun _ ->
-  assert_equal card (PlanetCard.to_string (PlanetCard.of_string card))
+  assert_equal card
+    (PlanetCard.to_string (PlanetCard.of_string card))
+    ~printer:Fun.id
 
 let planet_card_str_tests = List.map planet_str_helper planet_cards
+let print_mc (m, c) = string_of_float m ^ ", " ^ string_of_int c
 
 let planet_effect_helper success card hand =
   let mult, chips = (ref 2.5, ref 100) in
@@ -135,7 +138,8 @@ let planet_effect_helper success card hand =
 
   "Planet card " ^ card ^ " with hand " ^ hand
   ^ " will have correct effect on initial 2.5 mult and 100 chips."
-  >:: fun _ -> assert_equal (2.5 +. addM, 100 + addC) (!mult, !chips)
+  >:: fun _ ->
+  assert_equal (2.5 +. addM, 100 + addC) (!mult, !chips) ~printer:print_mc
 
 let planet_card_effect_tests =
   List.flatten
@@ -703,6 +707,104 @@ let end_of_round_tests =
     end_of_round_test (0, 30, 38);
   ]
 
+let level_tests =
+  let incr_blind curr =
+    match !curr with
+    | "Small" -> curr := "Big"
+    | "Big" -> curr := "Boss"
+    | "Boss" -> curr := "Small"
+    | _ -> failwith "Blind can only be one of 'Small'. 'Big', or 'Boss'."
+  in
+  let incr_target target =
+    match !target with
+    (* ante 1 *)
+    | 300 -> target := 450
+    | 450 -> target := 600
+    | 600 -> target := 800
+    (* ante 2 *)
+    | 800 -> target := 1200
+    | 1200 -> target := 1600
+    | 1600 -> target := 2000
+    (* ante 3 *)
+    | 2000 -> target := 3500
+    | 3500 -> target := 4000
+    | 4000 -> target := 5000
+    (* ante 4 *)
+    | 5000 -> target := 7500
+    | 7500 -> target := 10_000
+    | 10_000 -> target := 11_000
+    (* ante 5 *)
+    | 11_000 -> target := 16_500
+    | 16_500 -> target := 22_000
+    | 22_000 -> target := 20_000
+    (* ante 6 *)
+    | 20_000 -> target := 30_000
+    | 30_000 -> target := 40_000
+    | 40_000 -> target := 35_000
+    (* ante 7 *)
+    | 35_000 -> target := 52_500
+    | 52_500 -> target := 70_000
+    | 70_000 -> target := 50_000
+    (* ante 8 *)
+    | 50_000 -> target := 75_000
+    | 75_000 -> target := 100_000
+    | _ -> failwith "Bad target"
+  in
+
+  let curr_level = Level.start_level () in
+  let curr_ante = ref 1 in
+  let curr_blind = ref "Small" in
+  let target = ref 300 in
+  let arr =
+    ref []
+    (* Array.make 72 ("filler" >:: fun _ -> assert_equal 0 1
+       ~printer:string_of_int) *)
+  in
+  let curr_elem = ref 0 in
+  arr :=
+    (* arr.(!curr_elem) <- *)
+    ( Level.to_string curr_level ^ " should have correct ante." >:: fun _ ->
+      assert_equal !curr_ante (Level.ante curr_level) ~printer:string_of_int )
+    :: (* arr.(!curr_elem + 1) <- *)
+       ( Level.to_string curr_level ^ " should have correct blind." >:: fun _ ->
+         assert_equal !curr_blind (Level.blind curr_level) ~printer:Fun.id )
+    :: (* arr.(!curr_elem + 2) <- *)
+       ( Level.to_string curr_level ^ " should have correct target score."
+       >:: fun _ ->
+         assert_equal !target
+           (Level.target_score curr_level)
+           ~printer:string_of_int )
+    :: !arr;
+  curr_elem := !curr_elem + 3;
+
+  for i = 1 to 23 do
+    Level.incr_level curr_level;
+    incr_blind curr_blind;
+    incr_target target;
+    if i mod 3 = 0 then incr curr_ante;
+    (* arr.(!curr_elem) <- *)
+    arr :=
+      ( Level.to_string curr_level ^ " should have correct ante." >:: fun _ ->
+        assert_equal !curr_ante (Level.ante curr_level) ~printer:string_of_int
+      )
+      :: (* arr.(!curr_elem + 1) <- *)
+         ( Level.to_string curr_level ^ " should have correct blind."
+         >:: fun _ ->
+           assert_equal !curr_blind (Level.blind curr_level) ~printer:Fun.id )
+      :: (* arr.(!curr_elem + 2) <- *)
+         ( Level.to_string curr_level ^ " should have correct target score."
+         >:: fun _ ->
+           assert_equal !target
+             (Level.target_score curr_level)
+             ~printer:string_of_int )
+      :: !arr;
+    curr_elem := !curr_elem + 3;
+    print_endline
+      ("CURRENT LEVEL: " ^ Level.to_string curr_level ^ " CURRELEM: "
+     ^ string_of_int !curr_elem)
+  done;
+  !arr
+
 let tests =
   "tests"
   >::: List.flatten
@@ -717,6 +819,7 @@ let tests =
            pay_tests;
            planet_card_str_tests;
            planet_card_effect_tests;
+           level_tests;
          ]
 
 let _ = run_test_tt_main tests
