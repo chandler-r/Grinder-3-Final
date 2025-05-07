@@ -343,6 +343,7 @@ let basic_scoring_tests =
   [
     (* Used this website to calculate played hand scores:
        https://efhiii.github.io/balatro-calculator/?h=AACgAJGAoEQIACA *)
+    (* high card - ace (5 + 11) *)
     create_basic_scoring_test 16
       [
         Card.of_pair ("Clubs", 14);
@@ -351,6 +352,7 @@ let basic_scoring_tests =
         Card.of_pair ("Hearts", 4);
         Card.of_pair ("Diamonds", 2);
       ];
+    (* pair - 7 ((10 + 7 * 2) * 2) *)
     create_basic_scoring_test 48
       [
         Card.of_pair ("Diamonds", 7);
@@ -359,6 +361,7 @@ let basic_scoring_tests =
         Card.of_pair ("Hearts", 4);
         Card.of_pair ("Diamonds", 2);
       ];
+    (* two pair - 7, 4 ((20 + 7 * 2 + 4 * 2) * 2) *)
     create_basic_scoring_test 84
       [
         Card.of_pair ("Diamonds", 7);
@@ -367,6 +370,7 @@ let basic_scoring_tests =
         Card.of_pair ("Hearts", 4);
         Card.of_pair ("Diamonds", 2);
       ];
+    (* three of a kind - 7 ((30 + 7 * 3) * 3) *)
     create_basic_scoring_test 153
       [
         Card.of_pair ("Diamonds", 7);
@@ -375,6 +379,7 @@ let basic_scoring_tests =
         Card.of_pair ("Hearts", 7);
         Card.of_pair ("Diamonds", 2);
       ];
+    (* three of a kind (same calculation as above) *)
     create_basic_scoring_test 153
       [
         Card.of_pair ("Diamonds", 7);
@@ -383,6 +388,7 @@ let basic_scoring_tests =
         Card.of_pair ("Spades", 7);
         Card.of_pair ("Diamonds", 2);
       ];
+    (* straight - 2-6 ((30 + 2 + 3 + 4 + 5 + 6) * 4) *)
     create_basic_scoring_test 200
       [
         Card.of_pair ("Diamonds", 2);
@@ -391,6 +397,7 @@ let basic_scoring_tests =
         Card.of_pair ("Hearts", 5);
         Card.of_pair ("Diamonds", 4);
       ];
+    (* straight - A-5 ((30 + 11 + 2 + 3 + 4 + 5) * 4) *)
     create_basic_scoring_test 220
       [
         Card.of_pair ("Diamonds", 2);
@@ -399,6 +406,7 @@ let basic_scoring_tests =
         Card.of_pair ("Hearts", 5);
         Card.of_pair ("Diamonds", 4);
       ];
+    (* high card (calculation above) *)
     create_basic_scoring_test 16
       [
         Card.of_pair ("Diamonds", 2);
@@ -407,6 +415,7 @@ let basic_scoring_tests =
         Card.of_pair ("Hearts", 6);
         Card.of_pair ("Diamonds", 4);
       ];
+    (* flush - hearts ((35 + 2 + 3 + 11 + 4 + 6) * 4) *)
     create_basic_scoring_test 244
       [
         Card.of_pair ("Hearts", 2);
@@ -415,6 +424,7 @@ let basic_scoring_tests =
         Card.of_pair ("Hearts", 6);
         Card.of_pair ("Hearts", 4);
       ];
+    (* high card (calculation above) *)
     create_basic_scoring_test 13
       [
         Card.of_pair ("Diamonds", 2);
@@ -423,6 +433,7 @@ let basic_scoring_tests =
         Card.of_pair ("Hearts", 6);
         Card.of_pair ("Hearts", 4);
       ];
+    (* flush - diamonds ((35 + 2 + 3 + 11 + 11 + 4) * 4) *)
     create_basic_scoring_test 264
       [
         Card.of_pair ("Diamonds", 2);
@@ -431,6 +442,7 @@ let basic_scoring_tests =
         Card.of_pair ("Diamonds", 14);
         Card.of_pair ("Diamonds", 4);
       ];
+    (* flush - clubs ((35 + 4 + 3 + 11 + 11 + 4) * 4) *)
     create_basic_scoring_test 272
       [
         Card.of_pair ("Clubs", 4);
@@ -439,6 +451,7 @@ let basic_scoring_tests =
         Card.of_pair ("Clubs", 14);
         Card.of_pair ("Clubs", 4);
       ];
+    (* flush - spades ((35 + 11 + 3 + 11 + 11 + 4) * 4) *)
     create_basic_scoring_test 300
       [
         Card.of_pair ("Spades", 14);
@@ -447,6 +460,7 @@ let basic_scoring_tests =
         Card.of_pair ("Spades", 14);
         Card.of_pair ("Spades", 4);
       ];
+    (* full house - 4, 14 ((40 + 4 * 3 + 14 * 2) * 4) *)
     create_basic_scoring_test 296
       [
         Card.of_pair ("Clubs", 4);
@@ -455,6 +469,7 @@ let basic_scoring_tests =
         Card.of_pair ("Diamonds", 14);
         Card.of_pair ("Clubs", 4);
       ];
+    (* four of a kind - 14 ((60 + 11 * 4) * 7) *)
     create_basic_scoring_test 728
       [
         Card.of_pair ("Diamonds", 14);
@@ -463,6 +478,7 @@ let basic_scoring_tests =
         Card.of_pair ("Clubs", 14);
         Card.of_pair ("Hearts", 4);
       ];
+    (* straight flush - A-5 ((100 + 11 + 2 + 3 + 4 + 5) * 8) *)
     create_basic_scoring_test 1000
       [
         Card.of_pair ("Spades", 14);
@@ -471,6 +487,7 @@ let basic_scoring_tests =
         Card.of_pair ("Spades", 3);
         Card.of_pair ("Spades", 4);
       ];
+    (* five of a kind - 4 ((120 + 4 * 5) * 12) *)
     create_basic_scoring_test 1680
       [
         Card.of_pair ("Diamonds", 4);
@@ -479,6 +496,7 @@ let basic_scoring_tests =
         Card.of_pair ("Clubs", 4);
         Card.of_pair ("Hearts", 4);
       ];
+    (* flush house - 4,14 ((140 + 11 * 2 + 4 * 3) * 14) *)
     create_basic_scoring_test 2436
       [
         Card.of_pair ("Clubs", 4);
@@ -487,6 +505,7 @@ let basic_scoring_tests =
         Card.of_pair ("Clubs", 14);
         Card.of_pair ("Clubs", 4);
       ];
+    (* flush five - 4 ((160 + 4 * 5) * 16) *)
     create_basic_scoring_test 2880
       [
         Card.of_pair ("Clubs", 4);
