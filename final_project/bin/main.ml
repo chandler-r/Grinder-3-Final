@@ -154,12 +154,13 @@ let play_blind blind_thresh hands discards =
           let new_cards = Deck.draw_cards deck_copy cards_to_draw in
           curr_cards := !curr_cards @ new_cards;
           hands_left := !hands_left - 1;
-          ANSITerminal.erase ANSITerminal.Screen
         with
         | Failure msg ->
             Printf.printf "Internal Failure: %s\n" msg;
-            hands_left := 0
-        | _ -> print_endline "Unknown error has occured.")
+            Shop.open_shop money deck jokers;
+        | _ ->
+            print_endline "Unknown error has occured.";
+            Shop.open_shop money deck jokers;)
     | "2" when !discards_left > 0 ->
         ANSITerminal.erase ANSITerminal.Screen;
         let num_cards = List.length selected_hand in

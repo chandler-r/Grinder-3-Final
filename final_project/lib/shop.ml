@@ -36,25 +36,34 @@ let card_purchase () =
   in
   Card.of_pair (suit, rank)
 
-let joker_purchase () =
-  let load_jokers filename =
-    let file = open_in filename in
-    let rec read_lines acc =
-      try
-        let line = input_line file in
-        read_lines (line :: acc)
-      with End_of_file ->
-        close_in file;
-        List.rev acc
-    in
-    read_lines []
+let load_file filename =
+  let file = open_in filename in
+  let rec read_lines acc =
+    try
+      let line = input_line file in
+      read_lines (line :: acc)
+    with End_of_file ->
+      close_in file;
+      List.rev acc
   in
-  let joker_list = load_jokers "../data/jokers.txt" in
+  read_lines []
+
+let joker_purchase () =
+  let joker_list = load_file "../data/jokers.txt" in
+  print_endline "File loaded";
   let rand_idx = Random.int (List.length joker_list) in
   let random_joker = List.nth joker_list rand_idx in
-  Joker.of_string random_joker
+  print_endline ("Random joker: " ^ random_joker);
+  Joker.of_string random_joker 
 
-let dummy_planet_purchase () = Hand.create_hands "high card"
+let planet_purchase () = 
+  print_endline "Loading planets";
+  let hand_list = load_file "../data/hands.txt" in
+  print_endline "File loaded";
+  let rand_idx = Random.int (List.length hand_list) in
+  let random_hand = List.nth hand_list rand_idx in
+  print_endline ("Random hand: " ^ random_hand);
+  Hand.create_hands random_hand
 
 let open_shop (money : int ref) (deck : Deck.t ref) (jokers : Joker.t array ref)
     : unit =
@@ -88,7 +97,7 @@ let open_shop (money : int ref) (deck : Deck.t ref) (jokers : Joker.t array ref)
     | "3" ->
         if !money < 1 then print_endline "Not enough money for a planet card"
         else money := !money - 1;
-        let planet_card = dummy_planet_purchase () in
+        let planet_card = planet_purchase () in
         purchases := Planet_card_purchase planet_card :: !purchases;
         print_endline "Card added to cart!"
     | "4" ->
