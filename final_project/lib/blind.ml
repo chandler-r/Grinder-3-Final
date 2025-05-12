@@ -4,12 +4,11 @@ type t =
   | Boss
   | Defeated
 
-
 let current_blind = ref Small
 let none_blind_threshold = ref 0
-let small_blind_threshold = ref 300
-let big_blind_threshold = ref 600
-let boss_blind_threshold = ref 900
+let small_blind_threshold = ref 1
+let big_blind_threshold = ref 2
+let boss_blind_threshold = ref 3
 
 let blind_to_str = function
   | Small -> "Small"
@@ -25,7 +24,7 @@ let rec choose_blind () =
       int_of_float (float_of_int !big_blind_threshold ** 1.1);
     boss_blind_threshold :=
       int_of_float (float_of_int !boss_blind_threshold ** 1.1);
-      current_blind := Small);
+    current_blind := Small);
   print_endline "\nChoose your blind for this round";
   Printf.printf "\n1. Small Blind (Threshold: %d) \n" !small_blind_threshold;
   Printf.printf "2. Big Blind (Threshold: %d) \n" !big_blind_threshold;

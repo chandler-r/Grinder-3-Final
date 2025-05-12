@@ -6,8 +6,8 @@ val open_shop : int ref -> Deck.t ref -> Joker.t array ref -> unit
     jokers, and card modifiers with [money]. [deck] and [joker] are global
     variables that are modified when buying items. *)
 
-val process_purchases : t -> Deck.t ref -> Joker.t array ref -> unit
-(** [process_purchases purchase deck jokers] processes a purchase, [purchase]
+val process_purchase : t -> Deck.t ref -> Joker.t array ref -> unit
+(** [process_purchase purchase deck jokers] processes a purchase, [purchase]
     you've made. This function is meant to be used in a map to process a list of
     purchases. The purchase is passed on to its respective process function to
     change any global variables necessary. *)

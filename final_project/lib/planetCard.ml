@@ -8,17 +8,47 @@ type t =
   | Uranus
   | Neptune
   | Pluto
+(* AF: [Mercury] is the planet card that levels up pairs. [Venus] is the planet
+   card that levels up three of a kinds. [Earth] is the planet card that levels
+   up full houses. [Mars] is the planet card that levels up four of a kinds.
+   [Jupiter] is the planet card that levels up flushes. [Saturn] is the planet
+   card that levels up straights. [Uranus] is the planet card that levels up two
+   pairs. [Neptune] is the planet card that levels up straight flushes. [Pluto]
+   is the planet card that levels up high cards.*)
 
 let to_string = function
-  | Mercury -> "Mercury"
-  | Venus -> "Venus"
-  | Earth -> "Earth"
-  | Mars -> "Mars"
-  | Jupiter -> "Jupiter"
-  | Saturn -> "Saturn"
-  | Uranus -> "Uranus"
-  | Neptune -> "Neptune"
-  | Pluto -> "Pluto"
+  | Mercury -> "Mercury (Pair)"
+  | Venus -> "Venus (Three of a Kind)"
+  | Earth -> "Earth (Full House)"
+  | Mars -> "Mars (Four of a Kind)"
+  | Jupiter -> "Jupiter (Flush)"
+  | Saturn -> "Saturn (Straight)"
+  | Uranus -> "Uranus (Two Pair)"
+  | Neptune -> "Neptune (Straight Flush)"
+  | Pluto -> "Pluto (High Card)"
+
+let of_hand = function
+  | "pair" -> Mercury
+  | "three of a kind" -> Venus
+  | "full house" -> Earth
+  | "four of a kind" -> Mars
+  | "flush" -> Jupiter
+  | "straight" -> Saturn
+  | "two pair" -> Uranus
+  | "straight flush" -> Neptune
+  | "high card" -> Pluto
+  | _ -> failwith "This hand is currently unsupported."
+
+let to_hand = function
+  | Mercury -> "pair"
+  | Venus -> "three of a kind"
+  | Earth -> "full house"
+  | Mars -> "four of a kind"
+  | Jupiter -> "flush"
+  | Saturn -> "straight"
+  | Uranus -> "two pair"
+  | Neptune -> "straight flush"
+  | Pluto -> "high card"
 
 let of_string = function
   | "Mercury" -> Mercury
