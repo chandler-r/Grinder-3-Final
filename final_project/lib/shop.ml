@@ -50,19 +50,14 @@ let load_file filename =
 
 let joker_purchase () =
   let joker_list = load_file "../data/jokers.txt" in
-  print_endline "File loaded";
   let rand_idx = Random.int (List.length joker_list) in
   let random_joker = List.nth joker_list rand_idx in
-  print_endline ("Random joker: " ^ random_joker);
-  Joker.of_string random_joker 
+  Joker.of_string random_joker
 
-let planet_purchase () = 
-  print_endline "Loading planets";
+let planet_purchase () =
   let hand_list = load_file "../data/hands.txt" in
-  print_endline "File loaded";
   let rand_idx = Random.int (List.length hand_list) in
   let random_hand = List.nth hand_list rand_idx in
-  print_endline ("Random hand: " ^ random_hand);
   Hand.create_hands random_hand
 
 let open_shop (money : int ref) (deck : Deck.t ref) (jokers : Joker.t array ref)
