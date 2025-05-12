@@ -12,7 +12,7 @@ let process_deck_purchase (deck : Deck.t ref) (purchase : Card.t) =
 
 (** Write doc when done*)
 let process_joker_purchase (jokers : Joker.t array ref) (purchase : Joker.t) =
-  failwith "Not Implemented."
+  jokers := Joker.add_joker !jokers purchase
 
 (** [process_planet_card purchase] levels up the hand associated with
     [purchase].*)
@@ -25,8 +25,35 @@ let process_purchases (purchase : t) (deck : Deck.t ref)
   | Joker_purchase purchase -> process_joker_purchase jokers purchase
   | Planet_card_purchase purchase -> process_planet_card purchase
 
-let dummy_card_purchase () = Card.of_pair ("spades", 4)
-let dummy_joker_purchase () = Joker.of_string "Scholar"
+let card_purchase () =
+  let rank = Random.int 13 + 1 in
+  let suit =
+    match Random.int 4 with
+    | 0 -> "Spades"
+    | 1 -> "Hearts"
+    | 2 -> "Diamonds"
+    | _ -> "Clubs"
+  in
+  Card.of_pair (suit, rank)
+
+let joker_purchase () =
+  let load_jokers filename =
+    let file = open_in filename in
+    let rec read_lines acc =
+      try
+        let line = input_line file in
+        read_lines (line :: acc)
+      with End_of_file ->
+        close_in file;
+        List.rev acc
+    in
+    read_lines []
+  in
+  let joker_list = load_jokers "../data/jokers.txt" in
+  let rand_idx = Random.int (List.length joker_list) in
+  let random_joker = List.nth joker_list rand_idx in
+  Joker.of_string random_joker
+
 let dummy_planet_purchase () = Hand.create_hands "high card"
 
 let open_shop (money : int ref) (deck : Deck.t ref) (jokers : Joker.t array ref)
@@ -49,13 +76,13 @@ let open_shop (money : int ref) (deck : Deck.t ref) (jokers : Joker.t array ref)
     | "1" ->
         if !money < 2 then print_endline "Not enough money for a card"
         else money := !money - 2;
-        let card = dummy_card_purchase () in
+        let card = card_purchase () in
         purchases := Deck_purchase card :: !purchases;
         print_endline "Card added to cart!"
     | "2" ->
         if !money < 5 then print_endline "Not enough money for a joker"
         else money := !money - 5;
-        let joker = dummy_joker_purchase () in
+        let joker = joker_purchase () in
         purchases := Joker_purchase joker :: !purchases;
         print_endline "Joker added to cart!"
     | "3" ->

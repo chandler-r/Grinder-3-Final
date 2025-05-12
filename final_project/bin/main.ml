@@ -68,8 +68,7 @@ let rec get_user_selection cards =
   print_endline "Here are the available cards:";
   print_endline (card_list_printer cards);
   print_endline
-    "Enter the indicies of up to 5 cards (whitespace separated, ex. \
-     '1 2 3')\n";
+    "Enter the indicies of up to 5 cards (whitespace separated, ex. '1 2 3')\n";
   let input = read_line () in
   try
     let indices =
@@ -157,7 +156,9 @@ let play_blind blind_thresh hands discards =
           hands_left := !hands_left - 1;
           ANSITerminal.erase ANSITerminal.Screen
         with
-        | Failure msg -> Printf.printf "Scoring failed: %s\n" msg
+        | Failure msg ->
+            Printf.printf "Internal Failure: %s\n" msg;
+            hands_left := 0
         | _ -> print_endline "Unknown error has occured.")
     | "2" when !discards_left > 0 ->
         ANSITerminal.erase ANSITerminal.Screen;
@@ -174,8 +175,7 @@ let play_blind blind_thresh hands discards =
                   incr new_card_index;
                   new_card)
                 else card)
-              !curr_cards;
-          )
+              !curr_cards)
         else print_endline "Invalid number of cards"
     | "2" -> print_endline "No discards left."
     | _ -> print_endline "Invalid choice. Please try again."
@@ -192,4 +192,5 @@ let rec game_loop () =
   ANSITerminal.erase ANSITerminal.Screen;
   play_blind blind_threshold hands discards;
   game_loop ()
+
 let () = game_loop ()
