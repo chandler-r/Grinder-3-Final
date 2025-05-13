@@ -673,19 +673,19 @@ let play_disc_add_tests =
 
 (* Money tests *)
 let pay_check amount =
-  Money.money := 4;
+  let curr_money = ref 4 in
   if amount <= 4 then (
-    Money.pay amount;
-    !Money.money = 4 - amount)
+    Money.pay amount curr_money;
+    !curr_money = 4 - amount)
   else true
 
 let pay_test = QCheck.(Test.make ~count:10 ~name:"pay" small_nat pay_check)
 
 let overdraw_check amount =
-  Money.money := 4;
+  let curr_money = ref 4 in
   if amount > 4 then
     try
-      Money.pay amount;
+      Money.pay amount curr_money;
       false
     with Money.InsufficientFunds -> true
   else true
@@ -702,7 +702,7 @@ let end_of_round_test (blind, starting_cash, expected_output) =
   ^ " for level " ^ string_of_int blind ^ " and starting cash "
   ^ string_of_int starting_cash
   >:: fun _ ->
-  Money.money := starting_cash;
+  let curr_money = ref starting_cash in
   let level = Level.start_level () in
   if blind = 1 then Level.incr_level level
   else if blind = 2 then (
@@ -713,8 +713,8 @@ let end_of_round_test (blind, starting_cash, expected_output) =
     Level.incr_level level;
     Level.incr_level level)
   else ();
-  Money.end_of_round level 0;
-  assert_equal expected_output !Money.money ~printer:string_of_int
+  Money.end_of_round level 0 curr_money;
+  assert_equal expected_output !curr_money ~printer:string_of_int
 
 let end_of_round_tests =
   [

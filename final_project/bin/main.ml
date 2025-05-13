@@ -5,12 +5,11 @@ open Final_project
 
 open ANSITerminal
 
-let money = ref 50
+let curr_level = Level.start_level ()
+let money = Money.money ()
 let deck = ref (Deck.init ())
 let deck_length = ref 52
-let small_blind = ref 300
-let big_blind = ref 600
-let boss_blind = ref 900
+(* let small_blind = ref 300 let big_blind = ref 600 let boss_blind = ref 900 *)
 
 (* let jokers = ref [| Joker.of_string "Misprint"; Joker.of_string "OddTodd";
    Joker.of_string "EvenSteven"; Joker.of_string "Bloodstone"; Joker.of_string
@@ -68,7 +67,7 @@ let rec get_user_selection cards =
   print_endline "Here are the available cards:";
   print_endline (card_list_printer cards);
   print_endline
-    "Enter the indicies of up to 5 cards (whitespace separated, ex. '1 2 3')\n";
+    "Enter the indices of up to 5 cards (whitespace separated, ex. '1 2 3')\n";
   let input = read_line () in
   try
     let indices =
@@ -83,17 +82,17 @@ let rec get_user_selection cards =
       get_user_selection cards)
     else if List.length indices <> List.length (List.sort_uniq compare indices)
     then (
-      print_endline "\nDuplicate indicies detected. Please try again.\n";
+      print_endline "\nDuplicate indices detected. Please try again.\n";
       get_user_selection cards)
     else
       let selected_cards = List.map (List.nth cards) indices in
       selected_cards
   with
   | Failure _ ->
-      print_endline "\nInvalid input. Please enter valid indicies.\n";
+      print_endline "\nInvalid input. Please enter valid indices.\n";
       get_user_selection cards
   | Invalid_argument _ ->
-      print_endline "\nOne or more indicies are out of range. Try again.\n";
+      print_endline "\nOne or more indices are out of range. Try again.\n";
       get_user_selection cards
 
 let test_hand =
@@ -107,18 +106,20 @@ let test_hand =
     Card.of_pair ("Spades", 10);
   ]
 
-let play_blind blind_thresh hands discards =
+let play_blind level hands discards =
   let hands_left = ref hands in
   let discards_left = ref discards in
   let cumulative_score = ref 0 in
   let curr_cards = ref [] in
 
   while !hands_left > 0 do
+    Printf.printf "Your current blind: %S" (Level.to_string curr_level);
+
     Printf.printf
       "\n\
        You must meet or exceed the following score to beat this blind. \n\n\
        Blind Threshold: %d\n\n"
-      blind_thresh;
+      (Level.target_score level);
     Printf.printf "Current Score: %d\n\n" !cumulative_score;
     Printf.printf "Remaining Hands: %d, Remaining Discards: %d\n\n" !hands_left
       !discards_left;
@@ -126,7 +127,7 @@ let play_blind blind_thresh hands discards =
     if !curr_cards = [] then curr_cards := Deck.draw_cards deck_copy 8;
 
     let selected_hand = get_user_selection !curr_cards in
-    print_endline "You selected the following card:\n";
+    print_endline "You selected the following card(s):\n";
     print_endline (card_list_printer selected_hand);
 
     print_endline "\n1. Play Hand or 2. Discard Cards?";
@@ -137,11 +138,11 @@ let play_blind blind_thresh hands discards =
           let score = Scoring.score_played_cards selected_hand !jokers in
           cumulative_score := !cumulative_score + score;
 
-          if !cumulative_score >= blind_thresh then (
+          if !cumulative_score >= Level.target_score level then (
             print_endline
               "\n\
-               You beat the blind, Enjoy your spoils and continue your journey\n";
-            money := !money + 1;
+               You beat the blind! Enjoy your spoils and continue your journey.\n";
+            Money.end_of_round level 0 money;
             Printf.printf "You current money: %d\n" !money;
             (* Opens the shop allowing you to buy stuff. *)
             Shop.open_shop money deck jokers;
@@ -181,17 +182,20 @@ let play_blind blind_thresh hands discards =
     | "2" -> print_endline "No discards left."
     | _ -> print_endline "Invalid choice. Please try again."
   done;
-  if !cumulative_score < blind_thresh then (
+  if !cumulative_score < Level.target_score level then (
     print_endline "You failed to meet the blind. YOU LOSE!";
     exit 0)
 
 let rec game_loop () =
   ANSITerminal.erase ANSITerminal.Screen;
-  let blind_threshold = Blind.choose_blind () in
+  (* let blind_threshold = Blind.choose_blind () in *)
   let hands = 4 in
   let discards = 3 in
-  ANSITerminal.erase ANSITerminal.Screen;
-  play_blind blind_threshold hands discards;
-  game_loop ()
+  (* ANSITerminal.erase ANSITerminal.Screen; *)
+  play_blind curr_level hands discards;
+  try
+    Level.incr_level curr_level;
+    game_loop ()
+  with Level.GameOver -> Printf.printf "Great Job! You won!"
 
 let () = game_loop ()

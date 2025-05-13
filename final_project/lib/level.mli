@@ -22,3 +22,5 @@ val blind : level -> string
 
 val to_string : level -> string
 (** string representation of the level. *)
+
+(* val choose_next_blind : level -> unit *)

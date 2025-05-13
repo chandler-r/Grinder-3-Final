@@ -128,7 +128,7 @@ let calculate_card_contribution_acc jokers (chips_acc, mult_acc) card =
   in
   let mult = mult_acc in
   print_endline
-    ("Scored " ^ Card.to_string card ^ ": " ^ string_of_int chips ^ " x "
+    ("Scored " ^ Card.to_string card ^ " : " ^ string_of_int chips ^ " x "
    ^ string_of_float mult);
   let new_chips, new_mult =
     Joker.apply_scoring_jokers_to_card jokers card chips mult
@@ -143,6 +143,8 @@ let score_played_cards played jokers =
     let scored_hand_type = fst scored_hand_data |> Hand.played_hand_type in
     let base_chips = Hashtbl.find hand_base_chip_values scored_hand_type in
     let base_mult = Hashtbl.find hand_base_mult_values scored_hand_type in
+    print_endline
+      ("Scored hand type: " ^ String.capitalize_ascii scored_hand_type);
     print_endline
       ("Base : " ^ string_of_int base_chips ^ " x " ^ string_of_float base_mult);
     let curr_chips, curr_mult =

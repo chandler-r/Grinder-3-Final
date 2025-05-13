@@ -35,7 +35,7 @@ let rep_ok_play play =
 [@@coverage off]
 
 let create_hands hand =
-  match hand with
+  match String.lowercase_ascii hand with
   | "high card" -> HighCard
   | "pair" -> Pair
   | "two pair" -> TwoPair

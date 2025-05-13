@@ -17,15 +17,15 @@ type t =
    is the planet card that levels up high cards.*)
 
 let to_string = function
-  | Mercury -> "Mercury (Pair)"
-  | Venus -> "Venus (Three of a Kind)"
-  | Earth -> "Earth (Full House)"
-  | Mars -> "Mars (Four of a Kind)"
-  | Jupiter -> "Jupiter (Flush)"
-  | Saturn -> "Saturn (Straight)"
-  | Uranus -> "Uranus (Two Pair)"
-  | Neptune -> "Neptune (Straight Flush)"
-  | Pluto -> "Pluto (High Card)"
+  | Mercury -> "Mercury"
+  | Venus -> "Venus"
+  | Earth -> "Earth"
+  | Mars -> "Mars"
+  | Jupiter -> "Jupiter"
+  | Saturn -> "Saturn"
+  | Uranus -> "Uranus"
+  | Neptune -> "Neptune"
+  | Pluto -> "Pluto"
 
 let of_hand = function
   | "pair" -> Mercury
@@ -40,15 +40,15 @@ let of_hand = function
   | _ -> failwith "This hand is currently unsupported."
 
 let to_hand = function
-  | Mercury -> "pair"
-  | Venus -> "three of a kind"
-  | Earth -> "full house"
-  | Mars -> "four of a kind"
-  | Jupiter -> "flush"
-  | Saturn -> "straight"
-  | Uranus -> "two pair"
-  | Neptune -> "straight flush"
-  | Pluto -> "high card"
+  | Mercury -> "Pair"
+  | Venus -> "Three of a Kind"
+  | Earth -> "Full House"
+  | Mars -> "Four of a Kind"
+  | Jupiter -> "Flush"
+  | Saturn -> "Straight"
+  | Uranus -> "Two Pair"
+  | Neptune -> "Straight Flush"
+  | Pluto -> "High Card"
 
 let of_string = function
   | "Mercury" -> Mercury

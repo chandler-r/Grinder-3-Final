@@ -28,15 +28,23 @@ let remove_card deck card =
   Array.of_list (remove lst)
 
 let draw_cards deck n : Card.t list =
-  let deck_copy = Array.copy deck in
-  let current_length = ref (Array.length deck_copy) in
+  let deck_copy = ref (Array.copy deck) in
+  let current_length = ref (Array.length !deck_copy) in
   let drawn_cards = ref [] in
   for _ = 1 to n do
     if !current_length = 0 then failwith "Not enough cards in the deck";
     let r = Random.int !current_length in
-    let card = deck_copy.(r) in
+    let card = !deck_copy.(r) in
     drawn_cards := card :: !drawn_cards;
-    deck_copy.(r) <- deck_copy.(!current_length - 1);
+
+    (* !deck_copy.(r) <- !deck_copy.(!current_length - 1); *)
+    deck_copy :=
+      Array.append
+        (Array.init r (fun i -> !deck_copy.(i)))
+        (Array.init
+           (Array.length !deck_copy - r - 1)
+           (fun i -> !deck_copy.(r + 1 + i)));
+
     current_length := !current_length - 1
   done;
   List.rev !drawn_cards
