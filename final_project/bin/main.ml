@@ -1,4 +1,5 @@
 open Final_project
+open Shop2
 (* module Card = Final_project.Card module Hand = Final_project.Hand module
    Score = Final_project.Scoring module Deck = Final_project.Deck module Joker =
    Final_project.Joker module Shop = Final_project.Shop *)

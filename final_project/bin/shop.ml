@@ -1,3 +1,6 @@
+open Final_project
+
+(** Type representing shop items. *)
 type t =
   | DeckPurchase of Card.t
   | JokerPurchase of Joker.t
@@ -31,6 +34,10 @@ let process_planet_card (purchase : Hand.hands) =
   Scoring.level_up_hand purchase;
   print_endline "Planet card applied!"
 
+(** [process_purchase purchase deck jokers] processes a purchase, [purchase]
+    you've made. This function is meant to be used in a map to process a list of
+    purchases. The purchase is passed on to its respective process function to
+    change any global variables necessary. *)
 let process_purchase (purchase : t) (deck : Deck.t ref)
     (jokers : Joker.t array ref) =
   match purchase with
@@ -123,6 +130,9 @@ let planet_purchase () =
   let random_hand = List.nth hand_list rand_idx in
   PlanetCard.of_hand random_hand
 
+(** [open_shop money deck jokers] opens a shop that allows you to buy cards,
+    jokers, and card modifiers with [money]. [deck] and [joker] are global
+    variables that are modified when buying items. *)
 let open_shop (money : int ref) (deck : Deck.t ref) (jokers : Joker.t array ref)
     : unit =
   let shopping = ref true in
@@ -162,38 +172,44 @@ let open_shop (money : int ref) (deck : Deck.t ref) (jokers : Joker.t array ref)
     print_string "> ";
 
     match read_line () with
-    | "1" ->
-        if !money < 2 then print_endline "Not enough money for a card"
-        else money := !money - 2;
-        let card = card_purchase () in
-        (* purchases := DeckPurchase card :: !purchases; *)
-        process_purchase (DeckPurchase card) deck jokers
-    | "2" ->
+    | "1" -> (
+        try
+          Money.pay 2 money;
+          let card = card_purchase () in
+          process_purchase (DeckPurchase card) deck jokers
+        with Money.InsufficientFunds ->
+          print_endline "Not enough money for a card")
+    | "2" -> (
         if !joker_bought then ()
-        else (
-          if !money < joker_price then
+        else
+          try
+            Money.pay joker_price money;
+            joker_bought := true;
+            process_purchase (JokerPurchase !random_joker) deck jokers
+          with Money.InsufficientFunds ->
             print_endline "Not enough money for this joker"
-          else money := !money - joker_price;
-          (* purchases := JokerPurchase !random_joker :: !purchases; *)
-          joker_bought := true;
-          process_purchase (JokerPurchase !random_joker) deck jokers)
-    | "3" ->
+          (* purchases := JokerPurchase !random_joker :: !purchases; *))
+    | "3" -> (
         if !planet_card_bought then ()
-        else (
-          if !money < 3 then print_endline "Not enough money for a planet card"
-          else money := !money - 3;
+        else
+          try
+            Money.pay 3 money;
+            planet_card_bought := true;
+            process_purchase
+              (PlanetPurchase
+                 (PlanetCard.to_hand !random_planet_card |> Hand.create_hands))
+              deck jokers
+          with Money.InsufficientFunds ->
+            print_endline "Not enough money for a planet card"
           (* purchases := PlanetPurchase (PlanetCard.to_hand !random_planet_card
-             |> Hand.create_hands) :: !purchases; *)
-          planet_card_bought := true;
-          process_purchase
-            (PlanetPurchase
-               (PlanetCard.to_hand !random_planet_card |> Hand.create_hands))
-            deck jokers)
-    | "4" ->
-        if !money < 5 then print_endline "Not enough money to reroll"
-        else money := !money - 5;
-        joker_bought := false;
-        planet_card_bought := false
+             |> Hand.create_hands) :: !purchases; *))
+    | "4" -> (
+        try
+          Money.pay 5 money;
+          joker_bought := false;
+          planet_card_bought := false
+        with Money.InsufficientFunds ->
+          print_endline "Not enough money to reroll")
     | "5" ->
         print_endline "Processing your purchases...";
         shopping := false
