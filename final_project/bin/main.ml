@@ -142,7 +142,7 @@ let play_blind level hands discards =
             print_endline
               "\n\
                You beat the blind! Enjoy your spoils and continue your journey.\n";
-            Money.end_of_round level 0 money;
+            Money.end_of_round level (!hands_left - 1) money;
             Printf.printf "You current money: %d\n" !money;
             (* Opens the shop allowing you to buy stuff. *)
             Shop.open_shop money deck jokers;
