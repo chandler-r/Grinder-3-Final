@@ -3,7 +3,14 @@ type level
 exception GameOver
 
 val start_level : unit -> level
+(** [start_level ()] creates the level that a new game starts on. It is always a
+    small blind on ante 1. *)
+
 val incr_level : level -> unit
+(** [incr_level lev] updates [lev] at the end of a round. If it was a small
+    blind, it becomes a big blind. If it was a big blind, it becomes a boss
+    blind, and if it was a boss blind, it becomes a small blind with the ante
+    increased by 1. *)
 
 val target_score : level -> int
 (** [target_score l] is the user's target score to beat a specific level [l]. *)
