@@ -66,6 +66,18 @@ let blind level =
 let to_string level =
   "Level " ^ string_of_int (ante level) ^ ", " ^ blind level ^ " Blind"
 
+(* let to_pair level = (ante level, blind level) *)
+
+let of_pair (a, b) =
+  let blind =
+    match b with
+    | "Small" -> Small
+    | "Big" -> Big
+    | "Boss" -> Boss
+    | _ -> failwith "bad blind given"
+  in
+  if a >= 1 && a <= 8 then ref (a, blind) else failwith "bad ante given"
+
 (* let rec choose_next_blind level = if blind level = "Boss" then incr_level
    level; *)
 (* small_blind_threshold := (*int_of_float*) (*float_of_int*)

@@ -32,7 +32,7 @@ let create_basic_scoring_test expected cards =
   ^ string_of_int expected
   >:: fun _ ->
   assert_equal expected
-    (Scoring.score_played_cards cards [||])
+    (fst (Scoring.score_played_cards cards [||]))
     ~printer:string_of_int
 
 let create_joker_scoring_test expected cards jokers =
@@ -40,7 +40,7 @@ let create_joker_scoring_test expected cards jokers =
   ^ joker_list_printer jokers ^ " gives the score " ^ string_of_int expected
   >:: fun _ ->
   assert_equal expected
-    (Scoring.score_played_cards cards jokers)
+    (fst (Scoring.score_played_cards cards jokers))
     ~printer:string_of_int
 
 let card_tests =
@@ -153,6 +153,17 @@ let planet_card_effect_tests =
              else planet_effect_helper false c h)
            hands)
        planet_cards)
+
+let planet_of_hand_helper hand =
+  "to_hand of of_hand should not modify the hand, with the exception of \
+   possible capitalization (" ^ hand ^ ")"
+  >:: fun _ ->
+  assert_equal hand
+    (hand |> PlanetCard.of_hand |> PlanetCard.to_hand |> String.lowercase_ascii)
+    ~printer:Fun.id
+
+let planet_of_hand_tests =
+  List.map planet_of_hand_helper (List.filteri (fun i _ -> i < 9) hands)
 
 let deck_draw_helper n =
   let deck = Deck.init () in
@@ -747,8 +758,8 @@ let level_tests =
     | 1200 -> target := 1600
     | 1600 -> target := 2000
     (* ante 3 *)
-    | 2000 -> target := 3500
-    | 3500 -> target := 4000
+    | 2000 -> target := 3000
+    | 3000 -> target := 4000
     | 4000 -> target := 5000
     (* ante 4 *)
     | 5000 -> target := 7500
@@ -782,19 +793,20 @@ let level_tests =
        ~printer:string_of_int) *)
   in
   let curr_elem = ref 0 in
+  let ante = !curr_ante in
+  let blind = !curr_blind in
+  let level = Level.of_pair (ante, blind) in
+  let tgt = !target in
   arr :=
     (* arr.(!curr_elem) <- *)
-    ( Level.to_string curr_level ^ " should have correct ante." >:: fun _ ->
-      assert_equal !curr_ante (Level.ante curr_level) ~printer:string_of_int )
+    ( Level.to_string level ^ " should have correct ante" >:: fun _ ->
+      assert_equal ante (Level.ante level) ~printer:string_of_int )
     :: (* arr.(!curr_elem + 1) <- *)
-       ( Level.to_string curr_level ^ " should have correct blind." >:: fun _ ->
-         assert_equal !curr_blind (Level.blind curr_level) ~printer:Fun.id )
+       ( Level.to_string level ^ " should have correct blind" >:: fun _ ->
+         assert_equal blind (Level.blind level) ~printer:Fun.id )
     :: (* arr.(!curr_elem + 2) <- *)
-       ( Level.to_string curr_level ^ " should have correct target score."
-       >:: fun _ ->
-         assert_equal !target
-           (Level.target_score curr_level)
-           ~printer:string_of_int )
+       ( Level.to_string level ^ " should have correct target score" >:: fun _ ->
+         assert_equal tgt (Level.target_score level) ~printer:string_of_int )
     :: !arr;
   curr_elem := !curr_elem + 3;
 
@@ -804,25 +816,24 @@ let level_tests =
     incr_target target;
     if i mod 3 = 0 then incr curr_ante;
     (* arr.(!curr_elem) <- *)
+    let ante = !curr_ante in
+    let blind = !curr_blind in
+    let level = Level.of_pair (ante, blind) in
+    let tgt = !target in
     arr :=
-      ( Level.to_string curr_level ^ " should have correct ante." >:: fun _ ->
-        assert_equal !curr_ante (Level.ante curr_level) ~printer:string_of_int
-      )
+      ( Level.to_string level ^ " should have correct ante" >:: fun _ ->
+        assert_equal ante (Level.ante level) ~printer:string_of_int )
       :: (* arr.(!curr_elem + 1) <- *)
-         ( Level.to_string curr_level ^ " should have correct blind."
-         >:: fun _ ->
-           assert_equal !curr_blind (Level.blind curr_level) ~printer:Fun.id )
+         ( Level.to_string level ^ " should have correct blind" >:: fun _ ->
+           assert_equal blind (Level.blind level) ~printer:Fun.id )
       :: (* arr.(!curr_elem + 2) <- *)
-         ( Level.to_string curr_level ^ " should have correct target score."
+         ( Level.to_string level ^ " should have correct target score"
          >:: fun _ ->
-           assert_equal !target
-             (Level.target_score curr_level)
-             ~printer:string_of_int )
+           assert_equal tgt (Level.target_score level) ~printer:string_of_int )
       :: !arr;
-    curr_elem := !curr_elem + 3;
-    print_endline
-      ("CURRENT LEVEL: " ^ Level.to_string curr_level ^ " CURRELEM: "
-     ^ string_of_int !curr_elem)
+    curr_elem := !curr_elem + 3
+    (* print_endline ("CURRENT LEVEL: " ^ Level.to_string curr_level ^ "
+       CURRELEM: " ^ string_of_int !curr_elem) *)
   done;
   !arr
 
@@ -840,6 +851,7 @@ let tests =
            pay_tests;
            planet_card_str_tests;
            planet_card_effect_tests;
+           planet_of_hand_tests;
            level_tests;
          ]
 

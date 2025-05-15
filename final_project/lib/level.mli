@@ -31,3 +31,11 @@ val to_string : level -> string
 (** string representation of the level. *)
 
 (* val choose_next_blind : level -> unit *)
+
+(* val to_pair : level -> int * string *)
+(** gives a pair that is [(ante, blind)] *)
+
+val of_pair : int * string -> level
+(** FOR TESTING PURPOSES ONLY. Gives the level for a pair [(ante, blind)].
+    Requires [ante] between [1] and [8] (inclusive), [blind] is one of
+    ["Small"], ["Big"], ["Boss"]. *)

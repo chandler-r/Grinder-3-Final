@@ -19,12 +19,13 @@ val add_joker : t array -> t -> t array
     Raises [TooManyJokers] if [jokers] contains [joker_limit] jokers or more. *)
 
 val apply_scoring_jokers_to_card :
-  t array -> Card.t -> int -> float -> int * float
-(** [apply_scoring_jokers_to_card jokers card chips mult] is a pair whose first
-    element is the new number of chips and whose second number is the new mult
-    after applying the effects of all jokers in [jokers] to played card [card].
-    Each time a joker is applied, prints the name of that joker, as well as the
-    new chips and mult values. *)
+  t array -> Card.t -> int -> float -> (int * float) * string
+(** [fst apply_scoring_jokers_to_card jokers card chips mult] is a pair whose
+    first element is the new number of chips and whose second number is the new
+    mult after applying the effects of all jokers in [jokers] to played card
+    [card]. Each time a joker is applied, adds the name of that joker to a
+    string, as well as the new chips and mult values. That string is
+    [snd apply_scoring_jokers_to_card jokers card chips mult]*)
 
 val apply_scoring_jokers_to_hand :
   t array -> Card.t list -> int -> float -> int * float

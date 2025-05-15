@@ -1,5 +1,5 @@
 open Final_project
-open Shop2
+open Shop
 (* module Card = Final_project.Card module Hand = Final_project.Hand module
    Score = Final_project.Scoring module Deck = Final_project.Deck module Joker =
    Final_project.Joker module Shop = Final_project.Shop *)
@@ -112,6 +112,7 @@ let play_blind level hands discards =
   let discards_left = ref discards in
   let cumulative_score = ref 0 in
   let curr_cards = ref [] in
+  let all_used_cards = ref [] in
 
   while !hands_left > 0 do
     Printf.printf "Your current blind: %S" (Level.to_string curr_level);
@@ -125,7 +126,19 @@ let play_blind level hands discards =
     Printf.printf "Remaining Hands: %d, Remaining Discards: %d\n\n" !hands_left
       !discards_left;
     let deck_copy = Deck.copy_deck !deck in
-    if !curr_cards = [] then curr_cards := Deck.draw_cards deck_copy 8;
+    let _ =
+      if !curr_cards = [] then (
+        let remaining = ref 8 in
+        while !remaining <> 0 do
+          curr_cards :=
+            !curr_cards
+            @ List.filter
+                (fun x -> not (List.mem x !all_used_cards))
+                (Deck.draw_cards deck_copy !remaining);
+          remaining := 8 - List.length !curr_cards
+        done;
+        all_used_cards := !all_used_cards @ List.map Fun.id !curr_cards)
+    in
 
     let selected_hand = get_user_selection !curr_cards in
     print_endline "You selected the following card(s):\n";
@@ -136,7 +149,10 @@ let play_blind level hands discards =
     match read_line () with
     | "1" -> (
         try
-          let score = Scoring.score_played_cards selected_hand !jokers in
+          let score, to_print =
+            Scoring.score_played_cards selected_hand !jokers
+          in
+          print_endline to_print;
           cumulative_score := !cumulative_score + score;
 
           if !cumulative_score >= Level.target_score level then (
@@ -152,9 +168,19 @@ let play_blind level hands discards =
             List.filter
               (fun card -> not (List.mem card selected_hand))
               !curr_cards;
-          let cards_to_draw = 8 - List.length !curr_cards in
-          let new_cards = Deck.draw_cards deck_copy cards_to_draw in
-          curr_cards := !curr_cards @ new_cards;
+          let cards_to_draw = ref (8 - List.length !curr_cards) in
+          let new_cards = ref [] in
+          while !cards_to_draw <> 0 do
+            new_cards :=
+              !new_cards
+              @ List.filter
+                  (fun x ->
+                    not (List.mem x !curr_cards || List.mem x !new_cards))
+                  (Deck.draw_cards deck_copy !cards_to_draw);
+            cards_to_draw :=
+              8 - List.length !curr_cards - List.length !new_cards
+          done;
+          curr_cards := !curr_cards @ !new_cards;
           hands_left := !hands_left - 1
         with
         | Failure msg ->
@@ -168,13 +194,25 @@ let play_blind level hands discards =
         let num_cards = List.length selected_hand in
         if num_cards > 0 && num_cards <= 5 then (
           discards_left := !discards_left - 1;
-          let new_cards = Deck.draw_cards deck_copy num_cards in
+          let new_cards = ref [] in
+          let cards_to_draw = ref num_cards in
+          while !cards_to_draw <> 0 do
+            new_cards :=
+              !new_cards
+              @ List.filter
+                  (fun x ->
+                    not (List.mem x !curr_cards || List.mem x !new_cards))
+                  (Deck.draw_cards deck_copy !cards_to_draw);
+            cards_to_draw := num_cards - List.length !new_cards
+          done;
+
+          (* let new_cards = Deck.draw_cards deck_copy num_cards in *)
           let new_card_index = ref 0 in
           curr_cards :=
             List.mapi
               (fun i card ->
                 if List.mem card selected_hand then (
-                  let new_card = List.nth new_cards !new_card_index in
+                  let new_card = List.nth !new_cards !new_card_index in
                   incr new_card_index;
                   new_card)
                 else card)
