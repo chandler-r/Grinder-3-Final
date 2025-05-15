@@ -1,4 +1,6 @@
 type level
+(** The type of a level, indicating the ante and blind the player currently must
+    beat. *)
 
 exception GameOver
 

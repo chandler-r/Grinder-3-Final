@@ -3,15 +3,16 @@ type t
     https://balatrogame.fandom.com/wiki/Jokers. *)
 
 val joker_limit : int ref
-(** The maximum number of jokers that can be in play at one time. *)
+(** The maximum number of jokers that can be in play at one time. Defaults to
+    [5]. *)
 
 exception TooManyJokers
 (** Raised when trying to add a joker to a list that already contains
-    [joker_limit] jokers *)
+    [joker_limit] jokers. *)
 
 val to_string : t -> string
 (** [to_string joker] is the string representing the name of a specific kind of
-    joker. *)
+    joker, as well as a description of its effect. *)
 
 val add_joker : t array -> t -> t array
 (** [add_joker jokers j] is the array containing joker [j] as well as all the

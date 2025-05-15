@@ -96,7 +96,9 @@ let level_up_hand (hand : Hand.hands) =
 
   let prev_mult = Hashtbl.find hand_base_mult_values hand_type in
   Hashtbl.replace hand_base_mult_values hand_type (prev_mult +. bonus_mult);
-  Printf.printf "Leveled up %s to level %d!\n" hand_type (prev_level + 1)
+  Printf.printf "Leveled up %s to level %d!\n%!"
+    (String.capitalize_ascii hand_type)
+    (prev_level + 1)
 
 (** Helper function to visualize hands in system output. *)
 let card_list_printer cards =
@@ -150,7 +152,9 @@ let score_played_cards played jokers =
     str :=
       !str ^ "Scored hand type: "
       ^ String.capitalize_ascii scored_hand_type
-      ^ "\n" ^ "Base : " ^ string_of_int base_chips ^ " x "
+      ^ " (Level "
+      ^ string_of_int (Hashtbl.find hand_levels scored_hand_type)
+      ^ ")\n" ^ "Base : " ^ string_of_int base_chips ^ " x "
       ^ string_of_float base_mult ^ "\n";
     (* print_endline ("Scored hand type: " ^ String.capitalize_ascii
        scored_hand_type); print_endline ("Base : " ^ string_of_int base_chips ^

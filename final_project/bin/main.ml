@@ -115,6 +115,10 @@ let play_blind level hands discards =
   let all_used_cards = ref [] in
 
   while !hands_left > 0 do
+    print_endline
+      "Choose up to 5 cards to PLAY or DISCARD. Played or discarded cards will \
+       be substituted for different cards from your deck. Played cards will \
+       count towards your score.\n";
     Printf.printf "Your current blind: %S" (Level.to_string curr_level);
 
     Printf.printf
@@ -160,7 +164,7 @@ let play_blind level hands discards =
               "\n\
                You beat the blind! Enjoy your spoils and continue your journey.\n";
             Money.end_of_round level (!hands_left - 1) money;
-            Printf.printf "You current money: %d\n" !money;
+            Printf.printf "Your current money: $%d\n" !money;
             (* Opens the shop allowing you to buy stuff. *)
             Shop.open_shop money deck jokers;
             hands_left := 0);

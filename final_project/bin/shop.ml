@@ -140,16 +140,23 @@ let open_shop (money : int ref) (deck : Deck.t ref) (jokers : Joker.t array ref)
   Unix.sleep 1;
   let joker_bought = ref false in
   let planet_card_bought = ref false in
+  let rerolled = ref false in
   let random_joker = ref (generate_joker jokers (Random.int 100 + 1)) in
   let random_planet_card = ref (planet_purchase ()) in
   while !shopping do
-    if !joker_bought = false && !planet_card_bought = false then
-      random_joker := generate_joker jokers (Random.int 100 + 1);
+    if !joker_bought = false && !planet_card_bought = false && !rerolled = true
+    then random_joker := generate_joker jokers (Random.int 100 + 1);
     let joker_price = joker_cost !random_joker in
-    if !joker_bought = false && !planet_card_bought = false then
-      random_planet_card := planet_purchase ();
+    if !joker_bought = false && !planet_card_bought = false && !rerolled = true
+    then random_planet_card := planet_purchase ();
+    rerolled := false;
     print_endline
-      "\n==================== WELCOME TO THE SHOP ====================";
+      "\n==================== WELCOME TO THE SHOP ====================\n";
+    print_endline
+      "You may purchase random cards to add to your deck, Jokers to give you \
+       specified passive buffs as you continue to play hands (a maximum of 5 \
+       Jokers can be bought), and Planet Cards to increase the base chips and \
+       mult earned from playing a specified hand type.\n";
     Printf.printf "💰 You have $%d\n" !money;
     print_endline "Choose an item to purchase:";
     print_endline "1. Card - $2";
@@ -164,7 +171,7 @@ let open_shop (money : int ref) (deck : Deck.t ref) (jokers : Joker.t array ref)
       print_endline
         ("3. "
         ^ PlanetCard.to_string !random_planet_card
-        ^ " ("
+        ^ " (upgrades "
         ^ PlanetCard.to_hand !random_planet_card
         ^ ") - $3");
     print_endline "4. Reroll";
@@ -207,7 +214,8 @@ let open_shop (money : int ref) (deck : Deck.t ref) (jokers : Joker.t array ref)
         try
           Money.pay 5 money;
           joker_bought := false;
-          planet_card_bought := false
+          planet_card_bought := false;
+          rerolled := true
         with Money.InsufficientFunds ->
           print_endline "Not enough money to reroll")
     | "5" ->

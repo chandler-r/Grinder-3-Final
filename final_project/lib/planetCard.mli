@@ -20,5 +20,8 @@ val of_hand : string -> t
     ["full house"], ["four of a kind"], ["flush"], ["straight"], ["two pair"],
     ["straight flush"], or ["high card"]. *)
 
-(* NOTE: never used? *)
 val use_planet_card : t -> Hand.hands -> float ref -> int ref -> unit
+(** [use_planet_card p h f i] applies the planet card [p] when hand type [h] is
+    played. The current mult [f] and the current chips [i] that are rewarded for
+    playing that hand type are upgraded by set values, according to
+    https://balatrogame.fandom.com/wiki/Planet_Cards. *)

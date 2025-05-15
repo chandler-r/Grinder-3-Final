@@ -1,6 +1,7 @@
 (* open Card *)
 
 type t
+(** The type of a deck of cards. *)
 
 exception NotInDeck
 (** Exception for when an operation cannot finish because the specified card is
