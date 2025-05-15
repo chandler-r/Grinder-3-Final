@@ -165,14 +165,15 @@ let score_played_cards played jokers =
         ((base_chips, base_mult), ref "")
         scored_hand_cards
     in
-    let total_chips, total_mult =
+
+    let (total_chips, total_mult), str3 =
       Joker.apply_scoring_jokers_to_hand jokers played curr_chips curr_mult
     in
     let result =
       float_of_int total_chips *. total_mult |> ceil |> int_of_float
     in
     str :=
-      !str ^ !str2 ^ "Total : " ^ string_of_int total_chips ^ " x "
+      !str ^ !str2 ^ str3 ^ "Total : " ^ string_of_int total_chips ^ " x "
       ^ string_of_float total_mult ^ " = " ^ string_of_int result ^ "\n";
     (* print_endline ("Total : " ^ string_of_int total_chips ^ " x " ^
        string_of_float total_mult ^ " = " ^ string_of_int result); *)

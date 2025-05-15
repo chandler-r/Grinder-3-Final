@@ -29,13 +29,14 @@ val apply_scoring_jokers_to_card :
     [snd apply_scoring_jokers_to_card jokers card chips mult]*)
 
 val apply_scoring_jokers_to_hand :
-  t array -> Card.t list -> int -> float -> int * float
-(** [apply_scoring_jokers_to_hand jokers hand chips mult] is a pair whose first
-    element is the new number of chips and whose second number is the new mult
-    after applying the effects of all jokers in [jokers] to played hand [hand].
-    Each time a joker is applied, prints the name of that joker, as well as the
-    new chips and mult values. Requires that all the individual cards in [hand]
-    have already been scored. *)
+  t array -> Card.t list -> int -> float -> (int * float) * string
+(** [fst apply_scoring_jokers_to_hand jokers hand chips mult] is a pair whose
+    first element is the new number of chips and whose second number is the new
+    mult after applying the effects of all jokers in [jokers] to played hand
+    [hand]. Each time a joker is applied, adds the name of that joker to a
+    string, as well as the new chips and mult values. That string is
+    [snd apply_scoring_jokers_to_hand jokers hand chips mult]. Requires that all
+    the individual cards in [hand] have already been scored. *)
 
 val of_string : string -> t
 (** [joker_of_string_pair s] is a joker of kind [s]. NOTE: In current

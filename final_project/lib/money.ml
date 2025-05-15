@@ -13,14 +13,21 @@ let end_of_round level hands curr_money =
   let interest = !curr_money / 5 in
   (* curr_money := !curr_money + x + hands; if interest < !interest_cap then
      curr_money := !curr_money + interest else *)
-  print_endline ("Currently owned: $" ^ string_of_int !curr_money);
-  print_endline ("+ $" ^ string_of_int x ^ " (Beat the blind)");
-  print_endline ("+ $" ^ string_of_int hands ^ " ($1 per hand remaining)");
-  print_endline
-    ("+ $"
+  let str =
+    "Currently owned: $" ^ string_of_int !curr_money ^ "\n" ^ "+ $"
+    ^ string_of_int x ^ " (Beat the blind)" ^ "\n" ^ "+ $" ^ string_of_int hands
+    ^ " ($1 per hand remaining)" ^ "\n" ^ "+ $"
     ^ string_of_int
         (if interest < !interest_cap then interest else !interest_cap)
-    ^ " ($1 interest per $5 currently owned, up to $5)");
+    ^ " ($1 interest per $5 currently owned, up to $5)" ^ "\n"
+  in
+  (* print_endline ("Currently owned: $" ^ string_of_int !curr_money);
+     print_endline ("+ $" ^ string_of_int x ^ " (Beat the blind)");
+     print_endline ("+ $" ^ string_of_int hands ^ " ($1 per hand remaining)");
+     print_endline ("+ $" ^ string_of_int (if interest < !interest_cap then
+     interest else !interest_cap) ^ " ($1 interest per $5 currently owned, up to
+     $5)"); *)
   curr_money :=
     !curr_money + x + hands
-    + if interest < !interest_cap then interest else !interest_cap
+    + if interest < !interest_cap then interest else !interest_cap;
+  str

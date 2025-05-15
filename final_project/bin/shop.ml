@@ -160,7 +160,9 @@ let open_shop (money : int ref) (deck : Deck.t ref) (jokers : Joker.t array ref)
     Printf.printf "💰 You have $%d\n" !money;
     print_endline "Choose an item to purchase:";
     print_endline "1. Card - $2";
-    if !joker_bought then print_endline "Joker already purchased!"
+    if Array.length !jokers = 5 then
+      print_endline "Cannot add more jokers (maximum reached)."
+    else if !joker_bought then print_endline "Joker already purchased!"
     else
       print_endline
         ("2. "
@@ -174,7 +176,7 @@ let open_shop (money : int ref) (deck : Deck.t ref) (jokers : Joker.t array ref)
         ^ " (upgrades "
         ^ PlanetCard.to_hand !random_planet_card
         ^ ") - $3");
-    print_endline "4. Reroll";
+    print_endline "4. Reroll - $5";
     print_endline "5. Done shopping";
     print_string "> ";
 

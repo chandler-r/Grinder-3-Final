@@ -726,7 +726,7 @@ let end_of_round_test (blind, starting_cash, expected_output) =
     Level.incr_level level;
     Level.incr_level level)
   else ();
-  Money.end_of_round level 0 curr_money;
+  let _ = Money.end_of_round level 0 curr_money in
   assert_equal expected_output !curr_money ~printer:string_of_int
 
 let end_of_round_tests =

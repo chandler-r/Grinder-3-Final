@@ -141,7 +141,7 @@ let play_blind level hands discards =
                 (Deck.draw_cards deck_copy !remaining);
           remaining := 8 - List.length !curr_cards
         done;
-        all_used_cards := !all_used_cards @ List.map Fun.id !curr_cards)
+        all_used_cards := !all_used_cards @ !curr_cards)
     in
 
     let selected_hand = get_user_selection !curr_cards in
@@ -163,7 +163,8 @@ let play_blind level hands discards =
             print_endline
               "\n\
                You beat the blind! Enjoy your spoils and continue your journey.\n";
-            Money.end_of_round level (!hands_left - 1) money;
+            let s = Money.end_of_round level (!hands_left - 1) money in
+            print_endline s;
             Printf.printf "Your current money: $%d\n" !money;
             (* Opens the shop allowing you to buy stuff. *)
             Shop.open_shop money deck jokers;
@@ -179,12 +180,14 @@ let play_blind level hands discards =
               !new_cards
               @ List.filter
                   (fun x ->
-                    not (List.mem x !curr_cards || List.mem x !new_cards))
+                    not (List.mem x !all_used_cards || List.mem x !new_cards))
+                    (* not (List.mem x !curr_cards || List.mem x !new_cards)) *)
                   (Deck.draw_cards deck_copy !cards_to_draw);
             cards_to_draw :=
               8 - List.length !curr_cards - List.length !new_cards
           done;
           curr_cards := !curr_cards @ !new_cards;
+          all_used_cards := !all_used_cards @ !new_cards;
           hands_left := !hands_left - 1
         with
         | Failure msg ->
@@ -205,7 +208,8 @@ let play_blind level hands discards =
               !new_cards
               @ List.filter
                   (fun x ->
-                    not (List.mem x !curr_cards || List.mem x !new_cards))
+                    not (List.mem x !all_used_cards || List.mem x !new_cards))
+                    (* not (List.mem x !curr_cards || List.mem x !new_cards)) *)
                   (Deck.draw_cards deck_copy !cards_to_draw);
             cards_to_draw := num_cards - List.length !new_cards
           done;
@@ -220,7 +224,8 @@ let play_blind level hands discards =
                   incr new_card_index;
                   new_card)
                 else card)
-              !curr_cards)
+              !curr_cards;
+          all_used_cards := !all_used_cards @ !new_cards)
         else print_endline "Invalid number of cards"
     | "2" -> print_endline "No discards left."
     | _ -> print_endline "Invalid choice. Please try again."

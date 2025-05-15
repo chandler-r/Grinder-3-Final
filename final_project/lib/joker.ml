@@ -305,16 +305,18 @@ let apply_scoring_jokers_to_card_helper (card : Card.t)
   ((!chips, !mult), str)
 
 let apply_scoring_jokers_to_hand_helper (played : Card.t list)
-    (chips_and_mult : int * float) (joker : t) =
+    ((chips_and_mult : int * float), str) (joker : t) =
   let chips = ref (fst chips_and_mult) in
   let mult = ref (snd chips_and_mult) in
   let joker_applied = ref true in
   apply_single_joker_to_hand joker played chips mult joker_applied;
   if !joker_applied then
-    print_endline
-      ("Applied " ^ to_string joker ^ ": " ^ string_of_int !chips ^ " x "
-     ^ string_of_float !mult);
-  (!chips, !mult)
+    str :=
+      !str ^ "Applied " ^ to_string joker ^ ": " ^ string_of_int !chips ^ " x "
+      ^ string_of_float !mult ^ "\n";
+  (* print_endline ("Applied " ^ to_string joker ^ ": " ^ string_of_int !chips ^
+     " x " ^ string_of_float !mult); *)
+  ((!chips, !mult), str)
 
 let apply_scoring_jokers_to_card joker_arr card chips mult =
   let str = ref "" in
@@ -327,9 +329,14 @@ let apply_scoring_jokers_to_card joker_arr card chips mult =
   ((c, m), !s)
 
 let apply_scoring_jokers_to_hand joker_arr hand chips mult =
-  Array.fold_left
-    (apply_scoring_jokers_to_hand_helper hand)
-    (chips, mult) joker_arr
+  let str = ref "" in
+  let (c, m), s =
+    Array.fold_left
+      (apply_scoring_jokers_to_hand_helper hand)
+      ((chips, mult), str)
+      joker_arr
+  in
+  ((c, m), !s)
 
 let kind_of_string = function
   | "Joker" -> (Joker, Common)
