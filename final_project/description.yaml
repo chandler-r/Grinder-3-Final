@@ -27,9 +27,10 @@ demo-video-url: "https://youtu.be/ZV0XgF6TOFE"
 # Write a short, attention-grabbing description of your project.
 desc: >
   Our project is a simplified version of Balatro. It currently supports a
-  user drawing cards to make a hand, and playing that hand to receive a score.
+  user drawing cards to make a hand and playing that hand to receive a score. 
+  The user can go up to Ante 8 Boss Blind if they are good enough.
   The user interface is a TUI which prints the user's options in a friendly
   manner, asks the user to select a hand, and provides the score and type
-  of the selected hand.
+  of the selected hand, as well as shopping options.
 
   Scoring is based on standard Balatro scoring.
